@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Schedule;
 //     $this->comment(Inspiring::quote());
 // })->purpose('Display an inspiring quote');
 
-Schedule::command("queue:work --queue=high,default,low --stop-when-empty")->everySecond();
+//Schedule::command("queue:work --queue=high,default,low --stop-when-empty")->everySecond();
 // Schedule::command(SincJobs::class)->everySecond();
 // Schedule::command(BalansesServersCommand::class)->everyFifteenSeconds();
 
