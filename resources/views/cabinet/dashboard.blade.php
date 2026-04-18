@@ -88,7 +88,7 @@
     <!-- Devices -->
     <div class="card-custom p-3 mb-3">
         <div class="mb-2"><strong>Устройства {{ $devises->count() }}/4</strong></div>
-        @forelse ($devises as $devise)
+        @foreach($devises as $devise)
         <div class="d-flex flex-column gap-2 mb-3">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
@@ -201,7 +201,7 @@
         <i class="bi bi-globe"></i>
         <i class="bi bi-person"></i>
     </nav>
-    <div class="modal fade" id="exampleModal" tabindex="999">
+    <div class="modal fade" id="exampleModal" tabindex="-1">
         <div class="modal-dialog">
             <form action="{{ route('cabinet.devises.store') }}" method="post">
                 @csrf
