@@ -88,8 +88,9 @@
     <!-- Devices -->
     <div class="card-custom p-3 mb-3">
         <div class="mb-2"><strong>Устройства {{ $devises->count() }}/4</strong></div>
-        @foreach($devises as $devise)
         <div class="d-flex flex-column gap-2 mb-3">
+        @foreach($devises as $devise)
+
             <div class="d-flex justify-content-between align-items-center">
                 <div>
                     <i class="bi bi-phone"></i> {{ $devise->name }}
