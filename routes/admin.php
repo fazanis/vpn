@@ -32,7 +32,7 @@ Route::prefix('/admin')->middleware('admin')->name('admin.')->group(function (){
         Mail::raw(
             "Здравствуйте!\n\nЭто тестовое письмо с сайта family-nett.ru.\n\nЕсли вы получили это письмо — значит почта настроена корректно.",
             function ($message) {
-                $message->to('web.master.88@mail.ru')
+                $message->to('kravchuk001@gmail.ru')
                     ->subject('Тест отправки с сайта family-nett.ru')
                     ->from('admin@family-nett.ru', 'Family Nett')
                     ->replyTo('admin@family-nett.ru');
