@@ -29,10 +29,15 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('/admin')->middleware('admin')->name('admin.')->group(function (){
     Route::get('/testmail',function (){
-        Mail::raw('Тестовое письмо', function ($message) {
-            $message->to('web.master.88@mail.ru')
-                ->subject('Test Mail');
-        });
+        Mail::raw(
+            "Здравствуйте!\n\nЭто тестовое письмо с сайта family-nett.ru.\n\nЕсли вы получили это письмо — значит почта настроена корректно.",
+            function ($message) {
+                $message->to('web.master.88@mail.ru')
+                    ->subject('Тест отправки с сайта family-nett.ru')
+                    ->from('admin@family-nett.ru', 'Family Nett')
+                    ->replyTo('admin@family-nett.ru');
+            }
+        );
 
         return 'ok';
     })->name('test.mail');
