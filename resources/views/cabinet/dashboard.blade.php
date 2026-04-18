@@ -109,7 +109,7 @@
                     <small>Поделиться</small>
                 </button>
                 <form action="{{ route('cabinet.devises.destroy', $devise) }}" method="POST"
-                    onclick="return confirm('Вы уверенны что хотите удалить устройство?')">
+                      onsubmit="return confirm('Вы уверенны что хотите удалить устройство?')">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="btn btn-danger btn-sm d-flex align-items-center gap-1 px-2 py-1">
@@ -230,6 +230,7 @@
                         </button>
                     </div>
                 </div>
+            </form>
         </div>
     </div>
 </div>
