@@ -201,7 +201,7 @@
         <i class="bi bi-globe"></i>
         <i class="bi bi-person"></i>
     </nav>
-    <div class="modal fade" id="exampleModal" tabindex="-1">
+    <div class="modal fade" id="exampleModal" tabindex="999">
         <div class="modal-dialog">
             <form action="{{ route('cabinet.devises.store') }}" method="post">
                 @csrf
