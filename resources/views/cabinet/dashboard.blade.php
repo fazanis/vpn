@@ -240,9 +240,14 @@
         btn.addEventListener('click', async () => {
             const url = btn.dataset.url || window.location.href;
 
-            if (navigator.share) {
-                await navigator.share({ url });
-            } else {
+            try {
+                if (navigator.share) {
+                    await navigator.share({ url });
+                } else {
+                    await navigator.clipboard.writeText(url);
+                    alert('Ссылка скопирована');
+                }
+            } catch (e) {
                 await navigator.clipboard.writeText(url);
                 alert('Ссылка скопирована');
             }
