@@ -201,37 +201,38 @@
         <i class="bi bi-globe"></i>
         <i class="bi bi-person"></i>
     </nav>
-    <div class="modal fade" id="exampleModal" tabindex="-1">
-        <div class="modal-dialog">
-            <form action="{{ route('cabinet.devises.store') }}" method="post">
-                @csrf
-                <div class="modal-content" style="background-color: #0e2a40; color: #fff;">
 
-                    <div class="modal-header" style="border-bottom: 1px solid #1f4a6b;">
-                        <h5 class="modal-title">Добавление устройства</h5>
-                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                    </div>
+</div>
+<div class="modal fade" id="exampleModal" tabindex="-1">
+    <div class="modal-dialog">
+        <form action="{{ route('cabinet.devises.store') }}" method="post">
+            @csrf
+            <div class="modal-content" style="background-color: #0e2a40; color: #fff;">
 
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <label class="form-label">Название</label>
-                            <input name="name" class="form-control"
-                                style="background-color: #163a57; color: #fff; border: 1px solid #1f4a6b;"
-                                placeholder="Например: мой андроид">
-                        </div>
-                    </div>
+                <div class="modal-header" style="border-bottom: 1px solid #1f4a6b;">
+                    <h5 class="modal-title">Добавление устройства</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
 
-                    <div class="modal-footer" style="border-top: 1px solid #1f4a6b;">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                            Закрыть
-                        </button>
-                        <button type="submit" class="btn btn-primary">
-                            Сохранить
-                        </button>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Название</label>
+                        <input name="name" class="form-control"
+                               style="background-color: #163a57; color: #fff; border: 1px solid #1f4a6b;"
+                               placeholder="Например: мой андроид">
                     </div>
                 </div>
-            </form>
-        </div>
+
+                <div class="modal-footer" style="border-top: 1px solid #1f4a6b;">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Закрыть
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        Сохранить
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 <script>
