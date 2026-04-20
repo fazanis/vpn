@@ -25,7 +25,9 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
-
+//Route::any('{any}', function () {
+//    return redirect()->away('https://family-nett.ru', 301);
+//})->where('any', '.*');
 Route::get('/', function () {
     return view('welcome');
 });
@@ -70,7 +72,7 @@ Route::prefix('/cabinet')->name('cabinet.')
        auth()->logout();
        return redirect()->to('/cabinet');
     })->name('logout');
-    
+
 });
 
 //require __DIR__.'/auth.php';
