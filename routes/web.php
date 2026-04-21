@@ -31,6 +31,18 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/test', function () {
+    $devises = \App\Models\Devise::where('ui_name','moi-telefon70bf020e-7')->get();
+//    dd($devises);
+    $server = Server::first();
+    $xui = new XuiServices();
+    foreach ($devises as $devise){
+//        dump($devise);
+        dump($xui->clientTraffikById($server,$devise));
+    }
+
+});
+//https://family-nett.ru/paumetn/freekassa/events
 
 Route::get('/sub/{token}',[SubscriptPageController::class,'index'])->name('subscription.devises');
 

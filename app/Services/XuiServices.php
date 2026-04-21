@@ -20,7 +20,7 @@ class XuiServices
     {
         // $option['cookies'] = $cookies;
         // $option['verify'] = false;
-        
+
         $request = Http::withoutVerifying()->withOptions([
             'verify' => false,
         ]);
@@ -29,9 +29,9 @@ class XuiServices
             $cookies,
             parse_url($this->serverUrl(), PHP_URL_HOST));
         }
-       
 
-        
+
+
         $response = $request->withHeaders([
             'Content-Type' => 'application/json',
             'Accept' => 'application/json'
@@ -39,14 +39,14 @@ class XuiServices
         if ($response->json()==null) {
             $this->login();
         }
-    
+
         return $response;
     }
 
     protected function serverUrl(){
          return $this->server->type.'://'.$this->server->ip.':'.$this->server->port.'/'.$this->server->folder;
     }
-    
+
     public function login()
     {
         try{
@@ -58,7 +58,7 @@ class XuiServices
         }catch(Exception $e){
 
         }
-        
+
     }
     protected function formatCookies($cookies): array
     {
@@ -99,10 +99,10 @@ class XuiServices
     public function addClient(ServerInbound $server,Devise $devise,int $day=0)
     {
         try{
-      
+
         $this->server=$server->server;
         $imbount = $server->inbound;
- 
+
         $cookie=$this->login();
         $cookie = $this->formatCookies($cookie);
         $data = [
@@ -128,14 +128,14 @@ class XuiServices
             dd($e->getMessage());
         }
     }
-    
+
 
     public function getConnect(Server $server, User $user)
     {
         $this->server=$server;
-      
+
         $cookie=$this->login();
-        
+
         $cookie = $this->formatCookies($cookie);
         // dd('vless://'.$user->ui_id.'@'.str_replace($this->server->url,'https://',''));
         try{
@@ -148,10 +148,10 @@ class XuiServices
         $streamSettings= json_decode($response['obj']['streamSettings']);
         $settings= json_decode($response['obj']['settings']);
         $key='';
-        
+
         $key= $response['obj']['protocol'].'://'.$user->ui_id.'@'.$server->ip.':'.$response['obj']['port'].'?type='.
         $streamSettings->network.'&encryption='.$settings->encryption;
-        
+
         if(!$streamSettings->network==='tcp'){
             $key.='&path='.$streamSettings?->xhttpSettings?->path.
             '&host='.$streamSettings?->xhttpSettings?->host.
@@ -164,41 +164,42 @@ class XuiServices
         '&sid='.$streamSettings?->realitySettings?->shortIds[0].
         '&spx='.$streamSettings?->realitySettings?->settings?->spiderX.
         '&pqv='.$streamSettings?->realitySettings?->settings?->mldsa65Verify;
-    
+
         return $key;
         }catch(Exception $e){
             dd($e->getMessage());
         }
-        
-        
+
+
     }
 
-    public function clientTraffikById(Server $server,User $user)
+    public function clientTraffikById(Server $server,Devise $devise)
     {
-        $this->server=$server->server;
+
+        $this->server=$server;
         $cookie=$this->login();
         $cookie = $this->formatCookies($cookie);
 
         return $this->request(
-            'get', 
-            $this->serverUrl().'/panel/api/inbounds/getClientTrafficsById/'.$user->ui_id,
-            [], 
+            'get',
+            $this->serverUrl().'/panel/api/inbounds/getClientTrafficsById/moi-telefon70bf020e-7',//.$devise->ui_id,
+            [],
             $cookie
         )->json();
-        
+
     }
     public function clientExists(Server $server,User $user): bool
     {
-   
+
     try {
         $this->server=$server;
-        
+
         $cookie=$this->login();
         $cookie = $this->formatCookies($cookie);
         $response = $this->request(
-            'get', 
+            'get',
             $this->serverUrl().'/panel/api/inbounds/get/'. $this->server->imbound,
-            [], 
+            [],
             $cookie
         );
 
@@ -238,9 +239,9 @@ class XuiServices
         $cookie=$this->login();
         $cookie = $this->formatCookies($cookie);
         return $this->request(
-            'post', 
+            'post',
             $this->serverUrl().'/panel/api/inbounds/'.$imbount.'/delClient/'.$devise->ui_name,
-            [], 
+            [],
             $cookie
         )->json();
     }
@@ -252,9 +253,9 @@ class XuiServices
         $cookie=$this->login();
         $cookie = $this->formatCookies($cookie);
         return $this->request(
-            'get', 
+            'get',
             $this->serverUrl().'/panel/api/server/status',
-            [], 
+            [],
             $cookie
         )->json();
        }catch(Exception $e){
@@ -268,13 +269,13 @@ class XuiServices
             $cookie=$this->login();
             $cookie = $this->formatCookies($cookie);
             return $this->request(
-                'post', 
+                'post',
                 $this->serverUrl().'/panel/api/inbounds/onlines',
-                [], 
+                [],
                 $cookie
             )->json();
         }catch(Exception $e){}
-        
-       
+
+
     }
 }

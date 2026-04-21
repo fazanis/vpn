@@ -29,15 +29,23 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('/admin')->middleware('admin')->name('admin.')->group(function (){
     Route::get('/testmail',function (){
-        Mail::raw(
-            "Здравствуйте!\n\nЭто тестовое письмо с сайта family-nett.ru.\n\nЕсли вы получили это письмо — значит почта настроена корректно.",
-            function ($message) {
-                $message->to('kravchuk001@gmail.ru')
-                    ->subject('Тест отправки с сайта family-nett.ru')
-                    ->from('admin@family-nett.ru', 'Family Nett')
-                    ->replyTo('admin@family-nett.ru');
-            }
-        );
+        $to_name = 'Иван';
+        $to_email = 'kravchuk001@gmail.com';
+        $data = array('name'=>"Sam Jose", "body" => "Test mail");
+
+        Mail::send('emails.emails', $data, function($message) use ($to_name, $to_email) {
+            $message->to($to_email, $to_name)->subject('Artisans Web Testing Mail');
+            $message->from('admin@family-nett.ru','Artisans Web');
+        });
+//        Mail::raw(
+//            "Здравствуйте!\n\nЭто тестовое письмо с сайта family-nett.ru.\n\nЕсли вы получили это письмо — значит почта настроена корректно.",
+//            function ($message) {
+//                $message->to('kravchuk001@gmail.com')
+//                    ->subject('Тест отправки с сайта family-nett.ru')
+//                    ->from('admin@family-nett.ru', 'Family Nett')
+//                    ->replyTo('admin@family-nett.ru');
+//            }
+//        );
 
         return 'ok';
     })->name('test.mail');
