@@ -182,7 +182,7 @@ class XuiServices
 
         return $this->request(
             'get',
-            $this->serverUrl().'/panel/api/inbounds/getClientTrafficsById/moi-telefon70bf020e-7',//.$devise->ui_id,
+            $this->serverUrl().'/panel/api/inbounds/getClientTrafficsById/'.$devise->ui_name,
             [],
             $cookie
         )->json();

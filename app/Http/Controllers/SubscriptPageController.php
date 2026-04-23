@@ -20,7 +20,7 @@ class SubscriptPageController extends Controller
 {
     public function index(Request $request,$token)
     {
-        
+
         $devise = Devise::where('ui_id',$token)->first();
         $connects = ServerInbound::query()
         ->select('server_inbounds.*')
@@ -46,20 +46,20 @@ class SubscriptPageController extends Controller
             .'#'.$connect->server->name
             .''.$connect->server->flag
             ;
-            
+
          }
-        
-            
+
+
          $result = implode("\n",$array);
         $routing = HappRouting::query()->where('is_active',1)->latest()->first();
- 
+
         if($routing){
             $route= 'happ://routing/onadd/'.base64_encode($routing->rout);
         }else{
             $route= 'happ://routing/off';
         }
 
-        
+
         $userAgent = $request->header('User-Agent');
             if (str_contains($userAgent, 'Happ')  ||
                 str_contains($userAgent, 'V2Ray') ||
@@ -74,12 +74,12 @@ class SubscriptPageController extends Controller
                     ->header('announce', 'Если не работает нажмите 🔄')
                     ->header('profile-web-page-url', env('APP_URL').'/sub/'.$token)
                     ->header('Profile-Update-Interval', '1')
-                    ->header('subscription-userinfo','upload=0; download=50000; total=0; expire='. Carbon::now()->addDay(30)->timestamp);
+                    ->header('subscription-userinfo','upload=0; download='.$devise->trafik.'; total=0; expire='. Carbon::now()->addDay(30)->timestamp);
                     // ->header('subscription-userinfo','upload=0; download=20000; total=0; expire='. Carbon::parse($user->subscription->expires_at)->timestamp);
-                    
+
             }
-            
-             
+
+
             $userAgent = request()->header('User-Agent');
 
             if (str_contains($userAgent, 'Android')) {
@@ -91,15 +91,15 @@ class SubscriptPageController extends Controller
             } else {
                 $platform = 'Other';
             }
-            
-                    
+
+
 
             $url=env('APP_URL').'/sub/'.$token;
-        
+
             $happLink ='happ://add/' . env('APP_URL').'/sub/'.$token;
             $v2Link =env('APP_URL').'/sub/'.$token;
             $tg_bot = 'https://t.me/True2VpnBot?start='.$devise->user->ui_id;
-      
+
             return view('vpn.connect', [
                 'devise'=>$devise,
                 'url' => $url,
@@ -108,19 +108,19 @@ class SubscriptPageController extends Controller
                 'platform'=>$platform,
                 'tg_bot'=>$tg_bot
             ]);
-        
-        
+
+
     }
-    
+
     public function happConnect(Request $request,$token)
     {
         $servers = Server::where('status','active')->orderBy('priority')->get();
         $user = User::where('ui_id',$token)->first();
         $hasTrial = Subscription::where('user_id', $user->id)->where('type', 'trial')->first();
-        
+
         $xuiServices = new XuiServices();
         $result=[];
-        
+
         foreach($servers as $server){
             if(!$xuiServices->clientExists($server,$user)){
                 $xuiServices->addClient($server,$user);
@@ -128,9 +128,9 @@ class SubscriptPageController extends Controller
             $result[]= $xuiServices->getConnect($server,$user).'#'.$server->name.''.$server->flag;
             $traff=+$xuiServices->clientTraffikById($server,$user)['obj'][0]['allTime'];
         }
-        
+
       $result = implode("\n", $result);
-        
+
       return response(base64_encode($result))
             ->header('Content-Type', 'text/plain')
             ->header('Cache-Control', 'no-store')

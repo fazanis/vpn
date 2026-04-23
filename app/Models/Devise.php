@@ -14,7 +14,7 @@ class Devise extends Model
         'ui_id',
         'ui_name',
         'del',
-        'traffik'
+        'trafik'
     ];
 
     public static function boot()
