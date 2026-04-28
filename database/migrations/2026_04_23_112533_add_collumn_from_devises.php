@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('devises', function (Blueprint $table) {
-            $table->string('trafik')->after('ui_name')->default(0);
+            $table->bigInteger('trafik')->after('ui_name')->default(0);
         });
     }
 
