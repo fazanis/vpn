@@ -17,6 +17,6 @@ class CountTrafikServises
 
 //        dd(Carbon::createFromTimestamp(array_column($result, 'lastOnline')[0]/ 1000)->format('Y-m-d H:i:s'));
         $total = array_sum(array_column($result, 'allTime'));
-        $devise->update(['trafik'=>$total]);
+        return $total;
     }
 }

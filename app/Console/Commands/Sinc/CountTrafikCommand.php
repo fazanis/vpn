@@ -22,10 +22,12 @@ class CountTrafikCommand extends Command
         $servers = Server::all();
 
         foreach ($devises as $devise) {
+            $total = 0;
             foreach ($servers as $server) {
-                $countTrafikServises->count($devise, $server);
+                $total+= $countTrafikServises->count($devise, $server);
                 $this->info($devise->name);
             }
+            $devise->update(['trafik'=>$total]);
         }
     }
 }
