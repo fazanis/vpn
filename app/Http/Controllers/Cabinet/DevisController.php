@@ -19,7 +19,7 @@ class DevisController extends Controller
         $this->validate($request,[
             'name'=>'required'
         ]);
-     
+
         $devise = Devise::query()->create([
             'name'=>$request->name,
             'user_id'=>auth()->id(),
@@ -32,9 +32,9 @@ class DevisController extends Controller
     public function destroy(Devise $devise)
     {
         DeviseDeleteJob::dispatch($devise);
-        
+
         $devise->update(['del'=>1]);
-        
+
         return back();
     }
 }

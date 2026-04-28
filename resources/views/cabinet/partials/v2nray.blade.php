@@ -2,8 +2,8 @@
     <div class="card p-3">
         <h5>Установка</h5>
         <select id="platformSelectV2ray" name="platformv2" class="form-control" style="width:120px; float: right;">
-            <option value="Android" {{ $platform == 'Android' ? 'selected' : '' }}>Android</option>
-            <option value="Windows" {{ $platform == 'Windows' ? 'selected' : '' }}>Windows</option>
+            <option value="Android" {{ $platform == 'Android' ? 'selected' : '' }}>🤖 Android</option>
+            <option value="Windows" {{ $platform == 'Windows' ? 'selected' : '' }}>🪟 Windows</option>
         </select>
 
     </div>
@@ -12,14 +12,14 @@
     <div class="card p-3">
         <h2>1. Установка приложения</h2>
         <p>Выберите подходящую версию для вашего устройства, нажмите на кнопку ниже и установите приложение.</p>
-        <a id="v2downloadLink" href="#" target="_blank">Скачать приложение</a>
+        <a id="v2downloadLink" href="#" target="_blank" class="btn btn-outline-info">Скачать приложение</a>
     </div>
 </div>
 <div class="col-md-12 mx-auto mb-3">
     <div class="card p-3">
         <h2>2. Добавление подписки</h2>
         <p>Нажмите кнопку ниже — Откройте приложение v2nray и вставьте из буфера обмена.</p>
-        <button onclick="copyLink()" class="btn btn-success">Копировать ссылку</button>
+        <button onclick="copyLink()" class="btn btn-success" class="btn btn-outline-info">Копировать ссылку</button>
 
     </div>
 </div>

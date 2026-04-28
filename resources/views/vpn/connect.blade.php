@@ -1,4 +1,4 @@
-@extends('cabinet.layouts.app')
+@extends('cabinet.layouts.sub')
 @section('content')
     <div class="mb-4 col-md-8 mx-auto">
         <h3>Подключение устройства</h3>
@@ -24,16 +24,7 @@
                 <div class="tab-pane fade" id="v2nray">
                     @include('cabinet.partials.v2nray')
                 </div>
-                @if(!$devise->user->telegram_id)
-                    <div class="col-md-12 mx-auto mb-3">
-                        <div class="card p-3">
-                            <h2>4. Подключение к боту в Телеграм</h2>
-                            <p>Подключение нужно для получения новостей и изменений в сервисе</p>
-                            <p>Подключайтесь полсе продключения ВПН для коректной работы</p>
-                            <a href="{{ $tg_bot }}" class="btn btn-success">Подключить</a>
-                        </div>
-                    </div>
-                @endif
+
             </div>
         </div>
 

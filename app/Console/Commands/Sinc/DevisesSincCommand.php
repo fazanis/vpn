@@ -10,25 +10,26 @@ use Illuminate\Console\Command;
 
 class DevisesSincCommand extends Command
 {
-    
+
     protected $signature = 'devises-sinc-command';
     protected $description = 'Command description';
     public function handle()
     {
-        
-        $devises =SincJobs::query()->where('command',DevisesSincCommand::class)->get();
+
+        $devises =Devise::query()->get();
 
         $servers = ServerInbound::query()->with('server')->get();
-        
+
         $xui = new XuiServices();
-        foreach($devises as $devise){
-            foreach($servers as $server){
+        foreach($servers as $server){
+            foreach($devises as $devise){
+
                 try{
-                    $response=$xui->addClient($server,$devise->device);
-                    
+                    $response=$xui->addClient($server,$devise);
+
                     if(!$response['success']){
                         dump($response);
-                        
+
                         // continue;
                     }
                 }catch(Exception $e){
@@ -36,7 +37,7 @@ class DevisesSincCommand extends Command
                 }
 
             }
-           $devise->delete();
+//           $devise->delete();
         }
     }
 }

@@ -29,8 +29,8 @@ class Start implements CommandInterface
                 $token = $parts[1] ?? null;
                 if($token){
                     User::query()->where('ui_id',$token)->update(['telegram_id'=>$telegram_id]);
-                    InlineButton::add('Написать в тех потдержку',GetTrialKey::class);
-                    Bot::sendPhoto($request->input('message')['from']['id'],'Поздравляем вас с успешной регистрацией',InlineButton::get());
+//                    InlineButton::add('Написать в тех потдержку',GetTrialKey::class);
+                    Bot::sendPhoto($request->input('message')['from']['id'],'Поздравляем вас с успешной регистрацией');
                     return;
                 }
             }
@@ -45,7 +45,7 @@ class Start implements CommandInterface
         }catch(Exception $e){
             Cache::forever('error',$e->getMessage());
         }
-        
+
         // $tariff= Tariff::where('is_trial')->first();
         // InlineButton::add('✨ Бесплатный тест VPN ✨',GetTrialKey::class);
         // InlineButton::add('Бесплатный тест впн2',FreeTestVpn::class,1);

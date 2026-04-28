@@ -10,7 +10,7 @@ use Illuminate\Console\Command;
 class CountTrafikCommand extends Command
 {
 
-    protected $signature = 'count:trafik';
+    protected $signature = 'xui:trafik';
 
     protected $description = 'Command description';
 
@@ -22,7 +22,7 @@ class CountTrafikCommand extends Command
         $servers = Server::all();
         foreach ($servers as $server){
             foreach ($devises as $devise){
-                $countTrafikServises->count($devise,$server,$xui);
+                $countTrafikServises->count($devise,$server);
                 $this->info($devise->name);
             }
         }

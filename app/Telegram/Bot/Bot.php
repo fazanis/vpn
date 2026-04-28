@@ -35,18 +35,21 @@ class Bot
     public static function sendPhoto($chat_id,$text,$buttons=null)
     {
         $photoPath = Storage::disk('public')->path('images/familivpn.png');
+        $data = [
+            'chat_id'=>$chat_id,
+            'caption'=>$text,
+            'parse_mode'=>'HTML',
 
+        ];
+        if($buttons){
+            $data = array_merge($data,['reply_markup' => json_encode([
+                'inline_keyboard' => $buttons
+            ])]);
+        }
         return Http::attach(
             'photo',
             file_get_contents($photoPath),
             'image.png'
-        )->post('https://api.telegram.org/bot'.env('TELEGRAM_BOT_TOKEN').'/sendPhoto',[
-            'chat_id'=>$chat_id,
-            'caption'=>$text,
-            'parse_mode'=>'HTML',
-            'reply_markup' => json_encode([
-                'inline_keyboard' => $buttons
-            ])
-        ]);
+        )->post('https://api.telegram.org/bot'.env('TELEGRAM_BOT_TOKEN').'/sendPhoto',$data);
     }
 }

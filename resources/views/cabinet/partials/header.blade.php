@@ -15,14 +15,14 @@
                 <li class="nav-item"><a class="nav-link" href="#">Рефералы</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Новости</a></li>
                 <li class="nav-item"><a class="nav-link" href="#">Профиль</a></li> --}}
-                <li class="nav-item">
-                    <div class="card-login">
-                        <form method="POST" action="{{ route('cabinet.logout') }}">
-                            @csrf
-                            <button type="submit" class="btn btn-success float-right">Выход</button>
-                        </form>
-                    </div>
-                </li>
+{{--                <li class="nav-item">--}}
+{{--                    <div class="card-login">--}}
+{{--                        <form method="POST" action="{{ route('cabinet.logout') }}">--}}
+{{--                            @csrf--}}
+{{--                            <button type="submit" class="btn btn-success float-right">Выход</button>--}}
+{{--                        </form>--}}
+{{--                    </div>--}}
+{{--                </li>--}}
             </ul>
     </div>
 </nav>

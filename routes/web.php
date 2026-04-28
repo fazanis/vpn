@@ -32,18 +32,21 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('/test', function () {
-    $devises = \App\Models\Devise::query()->get();
 
-    $servers = Server::all();
-    $xui = new XuiServices();
-    foreach ($servers as $server){
-        foreach ($devises as $devise){
-            $result = $xui->clientTraffikById($server,$devise)['obj'];
-            $total = array_sum(array_column($result, 'allTime'));
-            $devise->update(['trafik'=>$total]);
-
-        }
-    }
+        $xui = new XuiServices();
+        dd($xui->getStatusServer(Server::first()));
+//    $devises = \App\Models\Devise::query()->get();
+//
+//    $servers = Server::all();
+//    $xui = new XuiServices();
+//    foreach ($servers as $server){
+//        foreach ($devises as $devise){
+//            $result = $xui->clientTraffikById($server,$devise)['obj'];
+//            $total = array_sum(array_column($result, 'allTime'));
+//            $devise->update(['trafik'=>$total]);
+//
+//        }
+//    }
 
 
 });

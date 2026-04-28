@@ -18,9 +18,6 @@ class XuiServices
     protected $server;
     protected function request(string $method, string $url, array $data, $cookies=null)
     {
-        // $option['cookies'] = $cookies;
-        // $option['verify'] = false;
-
         $request = Http::withoutVerifying()->withOptions([
             'verify' => false,
         ]);
@@ -245,6 +242,19 @@ class XuiServices
             $cookie
         )->json();
     }
+    public function deleteClientFromUiid(ServerInbound $server,$devise)
+    {
+        $this->server=$server->server;
+        $imbount = $server->inbound;
+        $cookie=$this->login();
+        $cookie = $this->formatCookies($cookie);
+        return $this->request(
+            'post',
+            $this->serverUrl().'/panel/api/inbounds/'.$imbount.'/delClient/'.$devise,
+            [],
+            $cookie
+        )->json();
+    }
 
     public function serverStatus(Server $server)
     {
@@ -275,7 +285,40 @@ class XuiServices
                 $cookie
             )->json();
         }catch(Exception $e){}
+    }
 
+    public function getClientLists(Server $server)
+    {
+        try {
+            $this->server=$server;
+            $cookie=$this->login();
+            $cookie = $this->formatCookies($cookie);
+            return $this->request(
+                'get',
+                $this->serverUrl().'/panel/api/inbounds/list',
+                [],
+                $cookie
+            )->json();
+        }catch (Exception $e){
 
+        }
+
+    }
+
+    public function getStatusServer(Server $server)
+    {
+        try {
+            $this->server=$server;
+            $cookie=$this->login();
+            $cookie = $this->formatCookies($cookie);
+            return $this->request(
+                'get',
+                $this->serverUrl().'/panel/api/server/status',
+                [],
+                $cookie
+            )->json();
+        }catch (Exception $e){
+            return ["success" => false];
+        }
     }
 }

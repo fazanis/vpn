@@ -14,4 +14,5 @@ use Illuminate\Support\Facades\Schedule;
 //Schedule::command("queue:work --queue=high,default,low --stop-when-empty")->everySecond();
 // Schedule::command(SincJobs::class)->everySecond();
 // Schedule::command(BalansesServersCommand::class)->everyFifteenSeconds();
+Schedule::command(\App\Console\Commands\Sinc\CountTrafikCommand::class)->hourly();
 

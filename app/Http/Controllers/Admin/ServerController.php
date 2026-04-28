@@ -50,7 +50,7 @@ class ServerController extends Controller
             'folder'=>'required',
             'imbound'=>['required','integer']
         ]);
-        
+
         $server->update($request->all());
         return redirect()->route('admin.servers.index');
     }
@@ -69,22 +69,26 @@ class ServerController extends Controller
         }else{
             $server->update(['status'=>'active']);
         }
-        
+
         return redirect()->route('admin.servers.index');
     }
 
     public function updateconnect(Server $server)
     {
         $xui = new XuiServices();
+        $server->inbounds()->delete();
         $imbounds=$xui->getImbounts($server)['obj'];
-    
+        if(is_null($imbounds)){
+            $server->inbounds()->delete();
+            return back();
+        }
+
         foreach($imbounds as $imbound){
-       
+
             $response = $xui->getImbount($server,$imbound['id']);
-      
             $streamSettings= json_decode($response['obj']['streamSettings']);
             $settings= json_decode($response['obj']['settings']);
-           
+//            dd($streamSettings);
             $array = [
                 'inbound'=>$imbound['id'],
                 'port'=>$response['obj']['port'],
@@ -100,16 +104,16 @@ class ServerController extends Controller
                 'spx'=>$streamSettings?->realitySettings?->settings?->spiderX,
                 'pqv'=>$streamSettings?->realitySettings?->settings?->mldsa65Verify,
             ];
-            
+
             if($streamSettings->network==="xhttp"){
                 $array =array_merge($array,[
                 'path'=>$streamSettings->xhttpSettings->path,
                 'host'=>$streamSettings?->xhttpSettings?->host,
                 'mode'=>$streamSettings?->xhttpSettings?->mode,
                 ]);
-            
+
             }
-     
+
             ServerInbound::query()->updateOrCreate([
                 'server_id'=>$server->id,
                 'protocol'=>$response['obj']['protocol'],

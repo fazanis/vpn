@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('devises', function (Blueprint $table) {
-            $table->integer('trafik')->after('ui_name')->nullable();
+            $table->integer('trafik')->after('ui_name')->default(0);
         });
     }
 

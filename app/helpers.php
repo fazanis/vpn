@@ -16,3 +16,19 @@ function formatUptime($seconds): string
 
     return "{$h}h {$m}m";
 }
+
+if (! function_exists('trafik')) {
+    function trafik($bytes,$precision = 2) {
+        if ($bytes <= 0) {
+            return '0 B';
+        }
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
+        $power = floor(log($bytes, 1024));
+        $power = min($power, count($units) - 1);
+
+        $value = $bytes / pow(1024, $power);
+
+
+        return round($value, $precision) . ' ' . $units[$power];
+    }
+}
