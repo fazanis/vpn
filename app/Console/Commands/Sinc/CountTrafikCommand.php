@@ -20,9 +20,10 @@ class CountTrafikCommand extends Command
         $devises = \App\Models\Devise::query()->get();
         $xui = new XuiServices();
         $servers = Server::all();
-        foreach ($servers as $server){
-            foreach ($devises as $devise){
-                $countTrafikServises->count($devise,$server);
+
+        foreach ($devises as $devise) {
+            foreach ($servers as $server) {
+                $countTrafikServises->count($devise, $server);
                 $this->info($devise->name);
             }
         }
