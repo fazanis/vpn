@@ -20,6 +20,8 @@ class CountTrafikCommand extends Command
         $devises = \App\Models\Devise::query()->get();
         $xui = new XuiServices();
         $servers = Server::all();
+        try {
+
 
         foreach ($devises as $devise) {
             $total = 0;
@@ -29,6 +31,9 @@ class CountTrafikCommand extends Command
             }
             $this->warn($total);
             $devise->update(['trafik'=>$total]);
+        }
+        }catch (\Exception $exception){
+            $this->error($exception->getMessage());
         }
     }
 }
