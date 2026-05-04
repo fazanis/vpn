@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\DeviseSincJob;
 use App\Models\Server;
 use App\Models\ServerInbound;
+use App\Services\Xui\Xui;
 use App\Services\XuiServices;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
@@ -73,27 +74,25 @@ class ServerController extends Controller
         return redirect()->route('admin.servers.index');
     }
 
-    public function updateconnect(Server $server)
+    public function updateconnect(Server $server,Xui $xui)
     {
-        $xui = new XuiServices();
-        $server->inbounds()->delete();
-        $imbounds=$xui->getImbounts($server)['obj'];
-        if(is_null($imbounds)){
-            $server->inbounds()->delete();
-            return back();
-        }
+        $imbounds=$xui->inbounds->getOne($server);
+        $xuiIds = collect($imbounds->json('obj'))->pluck('id')->toArray();
 
-        foreach($imbounds as $imbound){
 
-            $response = $xui->getImbount($server,$imbound['id']);
-            $streamSettings= json_decode($response['obj']['streamSettings']);
-            $settings= json_decode($response['obj']['settings']);
-//            dd($streamSettings);
+//        $server->inbounds()->delete();
+//        $imbounds=$xui->getImbounts($server)['obj'];
+        ServerInbound::where('server_id',$server->id)->whereNotIn('inbound', $xuiIds)->delete();
+
+        foreach($imbounds->json('obj') as $imbound){
+            $streamSettings= json_decode($imbound['streamSettings']);
+
+            $settings= json_decode($imbound['settings']);
             $array = [
                 'inbound'=>$imbound['id'],
-                'port'=>$response['obj']['port'],
+                'port'=>$imbound['port'],
                 'server_id'=>$server->id,
-                'protocol'=>$response['obj']['protocol'],
+                'protocol'=>$imbound['protocol'],
                 'type'=>$streamSettings->network,
                 'encryption'=>$settings->encryption,
                 'security'=>$streamSettings?->security,
@@ -116,11 +115,11 @@ class ServerController extends Controller
 
             ServerInbound::query()->updateOrCreate([
                 'server_id'=>$server->id,
-                'protocol'=>$response['obj']['protocol'],
+                'protocol'=>$imbound['protocol'],
                 'type'=>$streamSettings->network,
             ],$array);
 
-            DeviseSincJob::dispatch()->onQueue('low');
+            DeviseSincJob::dispatch($server)->onQueue('low');
         }
 
         return back();

@@ -16,6 +16,7 @@ class Webhook
     ];
     public function make(Request $request)
     {
+
         if (isset($request->all()['message']['entities'][0]['type'])
             && $request->all()['message']['entities'][0]['type']=='bot_command'
         ){

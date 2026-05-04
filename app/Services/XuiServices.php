@@ -10,12 +10,45 @@ use App\Models\User;
 use Carbon\Carbon;
 use Exception;
 use GuzzleHttp\Cookie\CookieJar;
+use Illuminate\Http\Client\Pool;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
 class XuiServices
 {
     protected $server;
+
+//    public function request(string $method, array $serverData, array $options = [])
+//    {
+//        $requests = Http::withoutVerifying()->withOptions([
+//            'verify' => false,
+//        ])->timeout(10)
+//            ->retry(2, 500)
+//            ->pool(function(Pool $pool) use ($serverData,$method){
+//            foreach ($serverData as $data){
+//                $pool->as($data['url'])->{$method}($data['url'],$data['data']);
+//            }
+//        });
+//        return $requests;
+//    }
+
+
+
+    public function newGetImbounts($servers)
+    {
+        $urls = [];
+        foreach ($servers as $server) {
+            $urls[]=[
+                'url'=>$server->type.'://'.$server->ip.':'.$server->port.'/'.$server->folder.'/panel/api/inbounds/list',
+                'data'=>[
+                    'username'=>$server->login,
+                    'password'=>$server->password
+                ]
+            ];
+        }
+        dd($urls);
+        return $this->request('post', $urls);
+    }
     protected function request(string $method, string $url, array $data, $cookies=null)
     {
         $request = Http::withoutVerifying()->withOptions([
@@ -24,7 +57,7 @@ class XuiServices
         if($cookies){
             $request->withCookies(
             $cookies,
-            parse_url($this->serverUrl(), PHP_URL_HOST));
+            parse_url($this->serverUrl($this->url), PHP_URL_HOST));
         }
 
 
@@ -41,13 +74,15 @@ class XuiServices
     }
 
     protected function serverUrl(){
-         return $this->server->type.'://'.$this->server->ip.':'.$this->server->port.'/'.$this->server->folder;
+        $url = $this->server->type.'://'.$this->server->ip.':'.$this->server->port.'/'.$this->server->folder;
+        $this->url=$url;
+         return $url;
     }
 
     public function login()
     {
         try{
-            $response =$this->request('post', $this->serverUrl().'/login/', [
+            $response =$this->request('post', $this->serverUrl($this->server).'/login/', [
             'username' => $this->server->login,
             'password' => $this->server->password,
             ]);
@@ -259,12 +294,11 @@ class XuiServices
     public function serverStatus(Server $server)
     {
         try{
-        $this->server=$server;
-        $cookie=$this->login();
+        $cookie=$this->login($server);
         $cookie = $this->formatCookies($cookie);
         return $this->request(
             'get',
-            $this->serverUrl().'/panel/api/server/status',
+            '/panel/api/server/status',
             [],
             $cookie
         )->json();
@@ -275,12 +309,11 @@ class XuiServices
     public function onlineUsers(Server $server)
     {
         try{
-            $this->server=$server;
-            $cookie=$this->login();
+            $cookie=$this->login($server);
             $cookie = $this->formatCookies($cookie);
             return $this->request(
                 'post',
-                $this->serverUrl().'/panel/api/inbounds/onlines',
+                $this->serverUrl($server).'/panel/api/inbounds/onlines',
                 [],
                 $cookie
             )->json();
@@ -290,12 +323,11 @@ class XuiServices
     public function getClientLists(Server $server)
     {
         try {
-            $this->server=$server;
-            $cookie=$this->login();
+            $cookie=$this->login($server);
             $cookie = $this->formatCookies($cookie);
             return $this->request(
                 'get',
-                $this->serverUrl().'/panel/api/inbounds/list',
+                $this->serverUrl($server).'/panel/api/inbounds/list',
                 [],
                 $cookie
             )->json();

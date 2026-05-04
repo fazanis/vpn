@@ -38,7 +38,7 @@
                             data-url="{{ route('subscription.devises', $devise->ui_id) }}"><i class="bi bi-share"></i>
                         Поделиться
                     </button>
-                    <form action="{{route('cabinet.devises.destroy',$devises)}}" method="post" id="myForm">
+                    <form action="{{route('cabinet.devises.destroy',$devise)}}" method="post" id="myForm">
                         @csrf
                         @method('DELETE')
                         <button class="dev-btn danger"

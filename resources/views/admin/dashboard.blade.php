@@ -1,26 +1,61 @@
 @extends('layouts.admin')
 @section('content')
     {{ env('APP_URL') . '/cabinet/login?ref=' . auth()->user()->referral_code }}
-    {{-- <div class="row">
-        @foreach($server_response as $server)
-        @php $s = $server['obj']; @endphp
 
-        <div class="col-md-3 mb-2">
-            <div class="card p-2 small">
-                <b>{{ $s['publicIP']['ipv4'] }}</b><br>
-                CPU: {{ number_format($s['cpu'], 1) }}%<br>
-                RAM: {{ formatBytes($s['mem']['current']) }}<br>
+        <div class="container-fluid mb-3">
+            <div class="row mb-3">
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <h5 class="mb-0">
+                            Всего онлайн: {{ $total ?? collect($online)->sum('count') }}
+                        </h5>
+                    </div>
+                </div>
             </div>
+
+            <div class="row">
+                @foreach($online as $item)
+                    <div class="col-md-6">
+                        <div class="card card-outline
+                        {{ $item['count'] > 0 ? 'card-success' : 'card-secondary' }}">
+
+                            <div class="card-header">
+                                <h3 class="card-title">
+                                    {{ $item['sertverIp'] }}
+                                </h3>
+
+                                <div class="card-tools">
+                                <span class="badge
+                                    {{ $item['count'] > 0 ? 'badge-success' : 'badge-secondary' }}">
+                                    {{ $item['count'] }} online
+                                </span>
+                                </div>
+                            </div>
+
+                            <div class="card-body p-2">
+                                @if(!empty($item['users']))
+                                    <ul class="list-group list-group-flush">
+                                        @foreach($item['users'] as $user)
+                                            <li class="list-group-item">
+                                                <i class="fas fa-user text-primary mr-2"></i>
+                                                {{ $user }}
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @else
+                                    <div class="text-center text-muted p-3">
+                                        Нет активных пользователей
+                                    </div>
+                                @endif
+                            </div>
+
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+
         </div>
-        @endforeach
-    </div> --}}
-    <div class="col-md-3 mb-2">
-        <div class="card p-2 small">
-            <b>Сейчас онлайн
-                {{ $online }}
-            </b><br>
-        </div>
-    </div>
+
     <div class="card mb-4">
         <div class="card-header">
             <h3 class="card-title">Сервера</h3>
@@ -30,83 +65,57 @@
             <div class="table-responsive">
                 <table class="table table-bordered table-sm align-middle">
                     <thead>
-                        <tr>
-                            <th>NAME</th>
-                            <th>IP</th>
-                            <th>CPU</th>
-                            <th>RAM</th>
-                            <th>Disk</th>
-                            <th>Net ↑↓</th>
-                            <th>Xray</th>
-                            <th>Uptime</th>
-                        </tr>
+                    <tr>
+                        <th>NAME</th>
+                        <th>IP</th>
+                        <th>CPU</th>
+                        <th>RAM</th>
+                        <th>Disk</th>
+                        <th>Net ↑↓</th>
+                        <th>Xray</th>
+                        <th>Uptime</th>
+                        <th>link</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @foreach($server_response as $item)
-                            @php
-                                $server = $item['server'];   // модель из БД
-                                $s = $item['status']['obj'] ?? null; // данные API
-                            @endphp
+                    @foreach($servers as $item)
+                        <tr>
+                            <td>{{$item->serverName}}</td>
+                            <td>{{$item->serverIp}}</td>
+                            <td>{{$item->cpu}} %</td>
+                            <td>
+                                <div class="progress" style="height: 15px;">
+                                    <div
+                                        class="progress-bar {{ $item->memoryPercentFormated() > 80 ? 'bg-danger' : ($item->memoryPercentFormated() > 50 ? 'bg-warning' : 'bg-success') }}"
+                                        style="width: {{ $item->memoryPercentFormated() }}%">
+                                    </div>
+                                </div>
+                                <small>{{$item->memCurrentFormated()}}</small>
+                            </td>
 
-                            <tr>
-                                <td>
-                                    <a target="_blank"
-                                        href="{{ $server->type . '://' . $server->ip . ':' . $server->port . '/' . $server->folder }}">
-                                        {{ $server->name }}
-                                    </a>
-                                </td>
-                                @if(!$s)
-                                    <td colspan="7" class="text-danger">
-                                        Сервер не в сети
-                                    </td>
-                                @else
-                                    @php
-                                        $ramPercent = ($s['mem']['current'] / $s['mem']['total']) * 100;
-                                        $diskPercent = ($s['disk']['current'] / $s['disk']['total']) * 100;
-                                    @endphp
-                                    <td>{{ $s['publicIP']['ipv4'] }}</td>
+                            <td>
+                                <div class="progress" style="height: 15px;">
+                                    <div class="progress-bar bg-warning" style="width: {{ $item->diskPercentFormated() }}%">
+                                    </div>
+                                </div>
+                                <small>{{ $item->diskCurrentFormated() }}</small>
+{{--                                {{$item->diskCurrentFormated()}} {{$item->diskTotalFormated()}}--}}
+                            </td>
+                            <td>
+                                ↑ {{$item->netIOUp}}  ↓ {{$item->netIODown}}
+                            </td>
+                            <td>
+                                {{$item->xray}}
+                            </td>
+                            <td>
+                                {{$item->uptime()}}
+                            </td>
+                            <td>
+                                <a href="{{$item->serverLink()}}" target="_blank">Перейти</a>
 
-                                    <td>
-                                        <span
-                                            class="
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                {{ $s['cpu'] > 80 ? 'text-danger' : ($s['cpu'] > 50 ? 'text-warning' : 'text-success') }}">
-                                            {{ number_format($s['cpu'], 1) }}%
-                                        </span>
-                                    </td>
-
-                                    <td style="min-width:150px;">
-                                        <div class="progress" style="height: 15px;">
-                                            <div class="progress-bar
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    {{ $ramPercent > 80 ? 'bg-danger' : ($ramPercent > 50 ? 'bg-warning' : 'bg-success') }}"
-                                                style="width: {{ $ramPercent }}%">
-                                            </div>
-                                        </div>
-                                        <small>{{ formatBytes($s['mem']['current']) }}</small>
-                                    </td>
-
-                                    <td style="min-width:150px;">
-                                        <div class="progress" style="height: 15px;">
-                                            <div class="progress-bar bg-warning" style="width: {{ $diskPercent }}%">
-                                            </div>
-                                        </div>
-                                        <small>{{ formatBytes($s['disk']['current']) }}</small>
-                                    </td>
-
-                                    <td>
-                                        ↑ {{ formatBytes($s['netIO']['up']) }}<br>
-                                        ↓ {{ formatBytes($s['netIO']['down']) }}
-                                    </td>
-
-                                    <td>
-                                        <span class="{{ $s['xray']['state'] === 'running' ? 'text-success' : 'text-danger' }}">
-                                            {{ $s['xray']['state'] }}
-                                        </span>
-                                    </td>
-
-                                    <td>{{ formatUptime($s['uptime']) }}</td>
-                                @endif
-                            </tr>
-                        @endforeach
+                            </td>
+                        </tr>
+                    @endforeach
                     </tbody>
                 </table>
             </div>
@@ -125,28 +134,28 @@
             <div class="table-responsive">
                 <table class="table table-bordered" role="table">
                     <thead>
-                        <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Название</th>
-                            <th scope="col">Инбоунд</th>
-                            <th scope="col">Порт</th>
-                            <th scope="col">Протокол</th>
-                            <th scope="col">Тип</th>
-                            <th scope="col">Защита</th>
-                        </tr>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Название</th>
+                        <th scope="col">Инбоунд</th>
+                        <th scope="col">Порт</th>
+                        <th scope="col">Протокол</th>
+                        <th scope="col">Тип</th>
+                        <th scope="col">Защита</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @foreach ($inbounds as $inbound)
-                            <tr class="align-middle">
-                                <td>{{ $loop->iteration }}</td>
-                                <td>{{ $inbound->server->name }}</td>
-                                <td>{{ $inbound->inbound }}</td>
-                                <td>{{ $inbound->port }}</td>
-                                <td>{{ $inbound->protocol }}</td>
-                                <td>{{ $inbound->type }}</td>
-                                <td>{{ $inbound->security }}</td>
-                            </tr>
-                        @endforeach
+                    @foreach ($inbounds as $inbound)
+                        <tr class="align-middle">
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $inbound->server->name }}</td>
+                            <td>{{ $inbound->inbound }}</td>
+                            <td>{{ $inbound->port }}</td>
+                            <td>{{ $inbound->protocol }}</td>
+                            <td>{{ $inbound->type }}</td>
+                            <td>{{ $inbound->security }}</td>
+                        </tr>
+                    @endforeach
                     </tbody>
                 </table>
             </div>

@@ -30,11 +30,14 @@ class SubscriptPageController extends Controller
         $array = [];
         foreach($connects as $connect){
             $array[]=$connect->protocol
-            .'://'.$devise->ui_name
+            .'://'.$devise->ui_id
             .'@'.$connect->server->ip
             .':'.$connect->port
             .'?type='.$connect->type
             .'&encryption='.$connect->encryption
+            .'&path='.$connect->path
+            .'&host='.$connect->host
+            .'&mode='.$connect->mode
             .'&security='.$connect->security
             .'&pbk='.$connect->pbk
             .'&fp='.$connect->fp
@@ -42,13 +45,12 @@ class SubscriptPageController extends Controller
             .'&sid='.$connect->sid
             .'&spx='.$connect->spx
             .'&pqv='.$connect->pqv
-            .'&pqv='.$connect->pqv
             .'#'.$connect->server->name
             .''.$connect->server->flag
             ;
 
          }
-
+//        dd($array);
 
          $result = implode("\n",$array);
         $routing = HappRouting::query()->where('is_active',1)->latest()->first();
@@ -98,7 +100,7 @@ class SubscriptPageController extends Controller
 
             $happLink ='happ://add/' . env('APP_URL').'/sub/'.$token;
             $v2Link =env('APP_URL').'/sub/'.$token;
-            $tg_bot = 'https://t.me/True2VpnBot?start='.$devise->user->ui_id;
+            $tg_bot = 'https://t.me/'.env('TELEGRAM_BOT_NAME').'?start='.$devise->user->ui_id;
 
             return view('vpn.connect', [
                 'devise'=>$devise,

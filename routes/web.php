@@ -33,20 +33,17 @@ Route::get('/', function () {
 });
 Route::get('/test', function () {
 
-        $xui = new XuiServices();
-        dd($xui->getStatusServer(Server::first()));
-//    $devises = \App\Models\Devise::query()->get();
-//
-//    $servers = Server::all();
-//    $xui = new XuiServices();
-//    foreach ($servers as $server){
-//        foreach ($devises as $devise){
-//            $result = $xui->clientTraffikById($server,$devise)['obj'];
-//            $total = array_sum(array_column($result, 'allTime'));
-//            $devise->update(['trafik'=>$total]);
-//
-//        }
-//    }
+      $user = User::query()->where('email','fazanis@mail.ru')->first();
+        $data = ['name'=>$user->name, "telegramLink" => 'https://t.me/'.env('TELEGRAM_BOT_NAME').'?start='.$user->ui_id];
+        $to_name = 'Иван';
+        $to_email = $user->email;
+
+        Mail::send('emails.subTelegram', $data, function($message) use ($to_name, $to_email) {
+            $message->to($to_email, $to_name)->subject('Подпишитесь на телеграм');
+            $message->from('admin@family-nett.ru',env('APP_NAME'));
+        });
+
+
 
 
 });

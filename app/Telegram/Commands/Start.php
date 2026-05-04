@@ -28,9 +28,10 @@ class Start implements CommandInterface
             if($parts>1){
                 $token = $parts[1] ?? null;
                 if($token){
-                    User::query()->where('ui_id',$token)->update(['telegram_id'=>$telegram_id]);
+                    $user = User::query()->where('ui_id',$token)->first();
+                    $user->update(['telegram_id'=>$telegram_id]);
 //                    InlineButton::add('Написать в тех потдержку',GetTrialKey::class);
-                    Bot::sendPhoto($request->input('message')['from']['id'],'Поздравляем вас с успешной регистрацией');
+                    Bot::sendPhoto($telegram_id,'Поздравляем вас с успешной регистрацией, теперь вы можете получать новости сервиса');
                     return;
                 }
             }

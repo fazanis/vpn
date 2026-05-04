@@ -20,7 +20,7 @@ class DeviseUpdateServises
                 foreach($devises as $devise){
                     try{
                         $response=$xui->addClient($server,$devise);
-                        
+
                         if(!$response['success']){
                             dump($response);
                         }

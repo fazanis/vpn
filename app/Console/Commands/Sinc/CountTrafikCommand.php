@@ -15,23 +15,17 @@ class CountTrafikCommand extends Command
     protected $description = 'Command description';
 
 
-    public function handle(CountTrafikServises $countTrafikServises)
+    public function handle()
     {
         $devises = \App\Models\Devise::query()->get();
-        $xui = new XuiServices();
-        $servers = Server::all();
+        $servers = Server::get();
         try {
-
-
-        foreach ($devises as $devise) {
-            $total = 0;
-            foreach ($servers as $server) {
-                $total+=$countTrafikServises->count($devise, $server);
-                $this->info($devise->name);
+            $xui = new \App\Services\Xui\Xui();
+            foreach ($devises as $devise){
+                $traf = $xui->clients->getTrafik($servers,$devise);
+                $devise->update(['trafik' => $traf]);
+                sleep(0.5);
             }
-            $this->warn($total);
-            $devise->update(['trafik'=>$total]);
-        }
         }catch (\Exception $exception){
             $this->error($exception->getMessage());
         }
