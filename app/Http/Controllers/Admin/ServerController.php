@@ -77,13 +77,16 @@ class ServerController extends Controller
     public function updateconnect(Server $server,Xui $xui)
     {
         $imbounds=$xui->inbounds->getOne($server);
+
         $xuiIds = collect($imbounds->json('obj'))->pluck('id')->toArray();
 
 
 //        $server->inbounds()->delete();
 //        $imbounds=$xui->getImbounts($server)['obj'];
         ServerInbound::where('server_id',$server->id)->whereNotIn('inbound', $xuiIds)->delete();
-
+        if (!$imbounds->json('obj')){
+            return back()->with('error','Ошибка подключения сервера '.$server->ip);
+        }
         foreach($imbounds->json('obj') as $imbound){
             $streamSettings= json_decode($imbound['streamSettings']);
 
@@ -122,6 +125,6 @@ class ServerController extends Controller
             DeviseSincJob::dispatch($server)->onQueue('low');
         }
 
-        return back();
+        return back()->with('success','Подключение успешно обновлено '.$server->ip);
     }
 }

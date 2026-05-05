@@ -28,6 +28,7 @@ class ServersService extends BaseService
                         'count'=>0
                     ];
                 }
+
                 return [
                     'sertverIp'=>$server->ip.' '.$server->name,
                     'users'=>$response->json('obj'),

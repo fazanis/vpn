@@ -12,6 +12,8 @@ class XuiClient
 
     public function request(string $method,$server, string $uri, array $data = [])
     {
+        try {
+
 
         if(!isset($this->cookies[$server->ip])){
             $this->cookies[$server->ip] = $this->login($server);
@@ -30,11 +32,13 @@ class XuiClient
             ])
             ->{$method}($url, $data);
         return $response;
+        } catch (\Illuminate\Http\Client\ConnectionException $e) {
+            return null;
+        }
     }
     public function poolRequest(string $method, Collection $servers, string $uri, array $data = [])
     {
-        try {
-            return Http::withoutVerifying()
+            return collect(Http::withoutVerifying()
                 ->timeout(10)
                 ->retry(2, 500)
                 ->pool(function (Pool $pool) use ($method, $servers, $uri, $data) {
@@ -57,10 +61,12 @@ class XuiClient
                             ->{$method}($url, $data);
 
                     })->toArray();
-                });
-        }catch (\Exception $exception){
-            return collect();
-        }
+                }))->map(function ($response){
+                return $response instanceof \Illuminate\Http\Client\Response
+                    ? $response
+                    : null; // 💡 убираем Exception
+            });
+
 
 
     }

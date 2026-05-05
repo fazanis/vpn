@@ -28,28 +28,37 @@ use Illuminate\Support\Facades\Route;
 //Route::any('{any}', function () {
 //    return redirect()->away('https://family-nett.ru', 301);
 //})->where('any', '.*');
+
 Route::get('/', function () {
     return view('welcome');
 });
 Route::get('/test', function () {
 
-      $user = User::query()->where('email','fazanis@mail.ru')->first();
-        $data = ['name'=>$user->name, "telegramLink" => 'https://t.me/'.env('TELEGRAM_BOT_NAME').'?start='.$user->ui_id];
-        $to_name = 'Иван';
-        $to_email = $user->email;
-
-        Mail::send('emails.subTelegram', $data, function($message) use ($to_name, $to_email) {
-            $message->to($to_email, $to_name)->subject('Подпишитесь на телеграм');
-            $message->from('admin@family-nett.ru',env('APP_NAME'));
-        });
+//      $user = User::query()->where('email','fazanis@mail.ru')->first();
+//        $data = ['name'=>$user->name, "telegramLink" => 'https://t.me/'.env('TELEGRAM_BOT_NAME').'?start='.$user->ui_id];
+//        $to_name = 'Иван';
+//        $to_email = $user->email;
+//
+//        Mail::send('emails.subTelegram', $data, function($message) use ($to_name, $to_email) {
+//            $message->to($to_email, $to_name)->subject('Подпишитесь на телеграм');
+//            $message->from('admin@family-nett.ru',env('APP_NAME'));
+//        });
 
 
 
 
 });
 //https://family-nett.ru/paumetn/freekassa/events
-
 Route::get('/sub/{token}',[SubscriptPageController::class,'index'])->name('subscription.devises');
+//Route::get('/sub/{token}', function ($token) {
+//    $response = Http::get("https://family-nett.ru/sub/{$token}");
+//
+//    return response($response->body(), 200)
+//        ->header('Content-Type', $response->header('Content-Type'));
+//})->name('subscription.devises');
+//Route::get('/sub/{token}', function ($token) {
+//    return redirect()->away("https://family-nett.ru/sub/{$token}", 302);
+//})->name('subscription.devises');
 
 Route::get('/webhook',WebhookController::class);
 

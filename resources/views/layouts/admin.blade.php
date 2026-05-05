@@ -313,6 +313,14 @@
                                 </p>
                             </a>
                         </li>
+{{--                        <li class="nav-item menu-open">--}}
+{{--                            <a href="{{route('admin.devises.index')}}" class="nav-link active">--}}
+{{--                                <i class="nav-icon bi bi-speedometer"></i>--}}
+{{--                                <p>--}}
+{{--                                    Устройства--}}
+{{--                                </p>--}}
+{{--                            </a>--}}
+{{--                        </li>--}}
                         <li class="nav-item menu-open">
                             <a href="{{route('admin.tarrifs.index')}}" class="nav-link active">
                                 <i class="nav-icon bi bi-speedometer"></i>
@@ -352,6 +360,16 @@
             </div>
 
             <div class="app-content">
+                @if(session('error'))
+                <div class="alert alert-danger">
+                    {{session('error')}}
+                </div>
+                @endif
+                @if(session('success'))
+                <div class="alert alert-success">
+                    {{session('success')}}
+                </div>
+                @endif
                 @yield('content')
             </div>
 

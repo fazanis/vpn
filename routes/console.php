@@ -16,3 +16,5 @@ use Illuminate\Support\Facades\Schedule;
 // Schedule::command(BalansesServersCommand::class)->everyFifteenSeconds();
 Schedule::command(\App\Console\Commands\Sinc\CountTrafikCommand::class)->hourly();
 
+Schedule::command(\App\Console\Commands\SendMailWithTelegramLink::class)->dailyAt('12:00');
+
