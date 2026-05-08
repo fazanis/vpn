@@ -25,8 +25,8 @@ class DashboardController extends Controller
         $servers = $xui->servers->status($myServers);
         $online=$xui->servers->online($myServers);
 
-        $inbounds = ServerInbound::query()->with('server')->paginate(10);
-        return view('admin.dashboard',compact('inbounds','servers','online'));
+        $devises = Devise::query()->with('user')->orderByDesc('trafik')->paginate(10);
+        return view('admin.dashboard',compact('devises','servers','online'));
 
     }
 }

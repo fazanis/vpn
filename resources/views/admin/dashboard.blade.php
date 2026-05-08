@@ -136,24 +136,20 @@
                     <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Название</th>
-                        <th scope="col">Инбоунд</th>
-                        <th scope="col">Порт</th>
-                        <th scope="col">Протокол</th>
-                        <th scope="col">Тип</th>
-                        <th scope="col">Защита</th>
+                        <th scope="col">Пользователь</th>
+                        <th scope="col">Устройство</th>
+                        <th scope="col">Скачано</th>
+                        <th scope="col">ui_id</th>
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach ($inbounds as $inbound)
+                    @foreach ($devises as $devise)
                         <tr class="align-middle">
                             <td>{{ $loop->iteration }}</td>
-                            <td>{{ $inbound->server->name }}</td>
-                            <td>{{ $inbound->inbound }}</td>
-                            <td>{{ $inbound->port }}</td>
-                            <td>{{ $inbound->protocol }}</td>
-                            <td>{{ $inbound->type }}</td>
-                            <td>{{ $inbound->security }}</td>
+                            <td>{{ $devise->user->name }}</td>
+                            <td>{{ $devise->name }}</td>
+                            <td>{{ formatBytes($devise->trafik) }}</td>
+                            <td>{{ $devise->ui_id }}</td>
                         </tr>
                     @endforeach
                     </tbody>
@@ -162,7 +158,12 @@
         </div>
         <!-- /.card-body -->
         <div class="card-footer clearfix">
-            {{ $inbounds->links() }}
+            <ul class="pagination pagination-sm m-0 float-right">
+                {{ $devises->links() }}
+            </ul>
         </div>
+{{--        <div class="card-footer clearfix">--}}
+{{--            {{ $devises->links() }}--}}
+{{--        </div>--}}
     </div>
 @endsection

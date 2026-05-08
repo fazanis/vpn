@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\DevisController as AdminDevisController;
 use App\Http\Controllers\Admin\ServerInboundController;
 use App\Http\Controllers\Admin\UpdateGeoController;
@@ -60,7 +59,7 @@ Route::prefix('/admin')->middleware('admin')->name('admin.')->group(function (){
         dd($r->json());
     })->name('install.webhook');
     Route::get('/update/geo',[UpdateGeoController::class,'index'])->name('update.geo');
-    Route::get('/',AdminDashboardController::class)->name('dashboard');
+    Route::get('/',\App\Http\Controllers\Admin\DashboardController::class)->name('dashboard');
 
     Route::get('/server/deactivated/{server}',[\App\Http\Controllers\Admin\ServerController::class,'deactivated'])->name('server.deactivated');
     Route::get('/server/updateconnect/{server}',[\App\Http\Controllers\Admin\ServerController::class,'updateconnect'])->name('server.updateconnect');
