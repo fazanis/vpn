@@ -24,6 +24,7 @@ class CountTrafikCommand extends Command
             foreach ($devises as $devise){
                 $traf = $xui->clients->getTrafik($servers,$devise);
                 $devise->update(['trafik' => $traf]);
+                $this->info($devise->name.' '.$traf);
                 sleep(0.5);
             }
         }catch (\Exception $exception){
