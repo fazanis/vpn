@@ -40,7 +40,7 @@ class XuiClient
     {
             return collect(Http::withoutVerifying()
                 ->timeout(10)
-                ->retry(2, 500)
+//                ->retry(2, 500)
                 ->pool(function (Pool $pool) use ($method, $servers, $uri, $data) {
                     return $servers->map(function ($server) use ($pool, $method, $uri, $data) {
 
@@ -48,7 +48,9 @@ class XuiClient
                         if(!isset($this->cookies[$server->ip])){
                             $this->cookies[$server->ip] = $this->login($server);
                         }
-
+                        if (!$this->cookies[$server->ip]) {
+                            return null;
+                        }
                         return $pool
                             ->as($server->ip)
                             ->withHeaders([
@@ -91,14 +93,19 @@ class XuiClient
      */
     public function login($server)
     {
-        $response = Http::withoutVerifying()->post($this->makeUrl($server, 'login'), [
-            'username' => $server->login,
-            'password' => $server->password,
-        ]);
-        if ($response->successful()) {
-            $this->cookies[$server->ip] = $response->cookies();
+        try {
+            $response = Http::withoutVerifying()->post($this->makeUrl($server, 'login'), [
+                'username' => $server->login,
+                'password' => $server->password,
+            ]);
+            if ($response->successful()) {
+                $this->cookies[$server->ip] = $response->cookies();
+            }
+            return $response->cookies();
+        } catch (\Throwable $e) {
+
+            return null;
         }
-        return $response->cookies();
 //        $responses = Http::withoutVerifying()
 //            ->pool(function (Pool $pool) use ($servers) {
 //
