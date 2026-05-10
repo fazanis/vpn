@@ -258,9 +258,16 @@ class ClientService extends BaseService
     {
         $responses= $this->requests('get',$servers,'panel/api/inbounds/getClientTrafficsById/'.$devise->ui_id);
         $total=0;
-        foreach($responses as $response){
-            $total+=array_sum(array_column($response->json('obj'), 'allTime'));
+        foreach ($responses as $response) {
+            $obj = $response->json('obj') ?? [];
+
+            foreach ($obj as $item) {
+                $total = bcadd($total, (string) ($item['allTime'] ?? 0), 0);
+            }
         }
+//        foreach($responses as $response){
+//            $total+=array_sum(array_column($response->json('obj'), 'allTime'));
+//        }
         return $total;
     }
 }
