@@ -23,7 +23,7 @@ class CountTrafikCommand extends Command
             $xui = new \App\Services\Xui\Xui();
             foreach ($devises as $devise){
                 $traf = $xui->clients->getTrafik($servers,$devise);
-                $devise->update(['trafik' => $traf]);
+                $devise->update(['trafik' => 6918708187]);
                 $this->info($devise->name.' '.$traf);
                 sleep(0.5);
             }
