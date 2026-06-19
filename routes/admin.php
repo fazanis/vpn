@@ -16,6 +16,8 @@ use App\Models\ServerInbound;
 use App\Models\Subscription;
 use App\Models\User;
 use App\Services\XuiServices;
+use App\Telegram\Actions\Donate;
+use App\Telegram\Buttons\InlineButton;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
@@ -49,7 +51,13 @@ Route::prefix('/admin')->middleware('admin')->name('admin.')->group(function (){
         return 'ok';
     })->name('test.mail');
     Route::get('/webhook-data',function(){
-        dd(Cache::get('webhook'));
+        $response = Cache::get('webhook');
+//        $buttons = (new InlineButton())
+//            ->add('123',Donate::class,2,'primary')
+//            ->add('345',Donate::class)
+//            ->get();
+//        dd($buttons);
+        dd($response);
     });
     Route::get('/install-webhook',function (){
     $r =Http::post("https://api.telegram.org/bot".env('TELEGRAM_BOT_TOKEN')."/setWebhook",[

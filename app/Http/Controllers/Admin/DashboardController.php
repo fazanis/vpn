@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Devise;
 use App\Models\Server;
 use App\Models\ServerInbound;
+use App\Services\Paument\FreeKassa;
 use App\Services\Xui\DTO\ClientDto;
 use App\Services\Xui\Xui;
 use App\Services\XuiServices;

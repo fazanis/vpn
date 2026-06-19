@@ -2,25 +2,22 @@
 
 namespace App\Telegram\Commands;
 
-use App\Models\Tariff;
 use App\Models\User;
-use App\Telegram\Actions\FreeTestVpn;
-use App\Telegram\Actions\GetTrialKey;
+use App\Telegram\Actions\Devise\MyDevise;
+use App\Telegram\Actions\Donate;
+use App\Telegram\Actions\Help;
 use App\Telegram\Actions\TestKey;
 use App\Telegram\Bot\Bot;
 use App\Telegram\Buttons\InlineButton;
-use App\Telegram\Webhook;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 
 class Start implements CommandInterface
 {
     public function run(Request $request)
     {
-        Cache::forever('webhook',$request->all());
+
         try{
             $text=$request->input('message')['text'];
             $telegram_id=$request->input('message')['from']['id'];
@@ -30,27 +27,24 @@ class Start implements CommandInterface
                 if($token){
                     $user = User::query()->where('ui_id',$token)->first();
                     $user->update(['telegram_id'=>$telegram_id]);
-//                    InlineButton::add('Написать в тех потдержку',GetTrialKey::class);
-                    Bot::sendPhoto($telegram_id,'Поздравляем вас с успешной регистрацией, теперь вы можете получать новости сервиса');
-                    return;
                 }
             }
-            Bot::sendMessage($telegram_id,'Добро пожаловать');
-        // User::query()->createOrFirst([
-        //     'telegram_id'=>$request->input('message')['from']['id']
-        // ],[
-        //     'name'=>$request->input('message')['from']['first_name'],
-        //     'email'=>$request->input('message')['from']['username'],
-        //     'telegram_id'=>$request->input('message')['from']['id'],
-        // ]);
+            $buttons = (new InlineButton())
+                ->add('📱 Мои устройства',MyDevise::class,3)
+                ->add('🆘 Написать в тех потдержку',Help::class,2)
+                ->add('💵 Сделать донат разработчику',Donate::class,1,'primary')
+                ->get();
+
+            Bot::sendPhoto($telegram_id,
+'👋 Добро пожаловать в FamilyNett — мы подключим Вас к миру
+
+🔒 Почему стоит выбрать FamilyNett?
+• Высокая скорость серверов
+• Балансировщик нагрузки'
+                ,$buttons);
+
         }catch(Exception $e){
             Cache::forever('error',$e->getMessage());
         }
-
-        // $tariff= Tariff::where('is_trial')->first();
-        // InlineButton::add('✨ Бесплатный тест VPN ✨',GetTrialKey::class);
-        // InlineButton::add('Бесплатный тест впн2',FreeTestVpn::class,1);
-        // $template = (string)view('bot.index',['name'=>$request->input('message')['from']['first_name'],'tariff'=>$tariff]??'' );
-        // Bot::sendPhoto($request->input('message')['from']['id'],$template,InlineButton::get());
     }
 }

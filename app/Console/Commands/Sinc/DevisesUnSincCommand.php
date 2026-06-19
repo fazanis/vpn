@@ -10,26 +10,26 @@ use Illuminate\Console\Command;
 
 class DevisesUnSincCommand extends Command
 {
-    
+
     protected $signature = 'devises-unsinc-command';
     protected $description = 'Command description';
     public function handle()
     {
-        
-        $devises =SincJobs::query()->where('command',DevisesUnSincCommand::class)->get();
+
+        $devises =Devise::query()->get();
 
         $servers = ServerInbound::query()->with('server')->get();
-        
+
         $xui = new XuiServices();
         foreach($devises as $devise){
             foreach($servers as $server){
                 try{
-            
-                    $response=$xui->deleteClient($server,$devise->device);
-                 
+
+                    $response=$xui->deleteClient($server,$devise);
+
                     if(!$response['success']){
                         dump($response);
-                        
+
                         // continue;
                     }
                 }catch(Exception $e){
@@ -37,8 +37,8 @@ class DevisesUnSincCommand extends Command
                 }
 
             }
-            $devise->device->delete();
-           $devise->delete();
+//            $devise->device->delete();
+//           $devise->delete();
         }
     }
 }

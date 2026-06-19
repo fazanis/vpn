@@ -1,28 +1,17 @@
 <?php
 
-use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\Admin\DevisController as AdminDevisController;
-use App\Http\Controllers\Admin\ServerInboundController;
-use App\Http\Controllers\Admin\UpdateGeoController;
 use App\Http\Controllers\Cabinet\Auth\LoginController;
+use App\Http\Controllers\Cabinet\Auth\SocialController;
 use App\Http\Controllers\Cabinet\DashboardController;
 use App\Http\Controllers\Cabinet\DevisController;
 use App\Http\Controllers\Cabinet\GetTrialController;
-use App\Http\Controllers\Cabinet\Auth\SocialController;
 use App\Http\Controllers\Cabinet\SubscriptionController;
 use App\Http\Controllers\SubscriptPageController;
 use App\Http\Controllers\WebhookController;
-use App\Models\Server;
-use App\Models\ServerInbound;
-use App\Models\Subscription;
 use App\Models\User;
-use App\Services\XuiServices;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Telegram\Actions\Devise\Devise;
+use App\Telegram\Buttons\InlineButton;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 
 //Route::any('{any}', function () {
@@ -33,20 +22,15 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::get('/test', function () {
-
-//      $user = User::query()->where('email','fazanis@mail.ru')->first();
-//        $data = ['name'=>$user->name, "telegramLink" => 'https://t.me/'.env('TELEGRAM_BOT_NAME').'?start='.$user->ui_id];
-//        $to_name = 'Иван';
-//        $to_email = $user->email;
-//
-//        Mail::send('emails.subTelegram', $data, function($message) use ($to_name, $to_email) {
-//            $message->to($to_email, $to_name)->subject('Подпишитесь на телеграм');
-//            $message->from('admin@family-nett.ru',env('APP_NAME'));
-//        });
-
-
-
-
+//    $telegram_id=423006227;
+//    $user = User::query()->where('telegram_id',$telegram_id)->with('devises')->first();
+//    $i=0;
+//    $buttons = (new InlineButton());
+//    foreach ($user->devises as $divise) {
+//        $buttons->add($divise->name,Devise::class."|".$divise->id,$i++);
+//    }
+//    $result = $buttons->get();
+//    dd($result);
 });
 //https://family-nett.ru/paumetn/freekassa/events
 Route::get('/sub/{token}',[SubscriptPageController::class,'index'])->name('subscription.devises');
@@ -61,6 +45,12 @@ Route::get('/sub/{token}',[SubscriptPageController::class,'index'])->name('subsc
 //})->name('subscription.devises');
 
 Route::get('/webhook',WebhookController::class);
+Route::post('/paumetn/freekassa/success',function (Request $request){
+    dd($request->all());
+})->withoutMiddleware([
+    \Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class,
+]);
+
 
 
 Route::get('/admin/login',[\App\Http\Controllers\Admin\LoginController::class,'index'])->name('admin.login');

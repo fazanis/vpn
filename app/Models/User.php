@@ -69,13 +69,13 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
- 
+
     public function referrals()
     {
         return $this->hasMany(User::class, 'referred_by');
     }
 
-    
+
     public function referrer()
     {
         return $this->belongsTo(User::class, 'referred_by');
@@ -83,5 +83,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function subscription()
     {
         return $this->hasOne(Subscription::class,'user_id','id');
+    }
+
+    public function devises()
+    {
+        return $this->hasMany(Devise::class,'user_id','id');
     }
 }

@@ -17,11 +17,11 @@ class ServerSinkCommand extends Command
         $xui = new XuiServices();
         foreach($servers as $server){
             $imbounts =$xui->getImbounts($server)['obj'];
-    
+
             foreach($imbounts as $imbount){
-    
+
                 $response = $xui->getImbount($server,$imbount['id']);
-            
+
                 $streamSettings= json_decode($response['obj']['streamSettings']);
                 $settings= json_decode($response['obj']['settings']);
                 $key='';
@@ -40,14 +40,14 @@ class ServerSinkCommand extends Command
                     'spx'=>$streamSettings?->realitySettings?->settings?->spiderX,
                     'pqv'=>$streamSettings?->realitySettings?->settings?->mldsa65Verify,
                 ];
-                
+
                 if($streamSettings->network==="xhttp"){
                     $array =array_merge($array,[
                     'path'=>$streamSettings->xhttpSettings->path,
                     'host'=>$streamSettings?->xhttpSettings?->host,
                     'mode'=>$streamSettings?->xhttpSettings?->mode,
                     ]);
-                
+
                 }
                 ServerInbound::query()->updateOrCreate([
                     'server_id'=>$server->id,

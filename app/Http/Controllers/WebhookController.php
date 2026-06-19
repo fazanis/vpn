@@ -11,8 +11,9 @@ class WebhookController extends Controller
 {
     public function __invoke(Request $request,Webhook $webhook)
     {
-        Cache::forever('webhook',$request->all());    
+        Cache::forget('webhook');
+        Cache::forever('webhook',$request->all());
         $webhook->make($request);
-        
+
     }
 }

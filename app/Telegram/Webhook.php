@@ -25,7 +25,13 @@ class Webhook
                 app($command)->run($request);
         }
         elseif (isset($request->input('callback_query')['data'])){
-            app($request->input('callback_query.data'))->handle($request);
+            $actions = explode("|",$request->input('callback_query.data'));
+            if (count($actions)>1){
+                app($actions[0])->handle($request);
+
+            }else{
+                app($request->input('callback_query.data'))->handle($request);
+            }
         }
     }
 }
