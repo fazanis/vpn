@@ -272,7 +272,7 @@ class XuiServices
         $cookie = $this->formatCookies($cookie);
         return $this->request(
             'post',
-            $this->serverUrl().'/panel/api/inbounds/'.$imbount.'/delClient/'.$devise->ui_name,
+            $this->serverUrl().'/panel/api/inbounds/'.$imbount.'/delClient/'.$devise->ui_id,
             [],
             $cookie
         )->json();
