@@ -24,15 +24,13 @@ class DevisesUnSincCommand extends Command
         foreach($devises as $devise){
             foreach($servers as $server){
                 try{
-
                     $response=$xui->deleteClient($server,$devise);
-
                     if(!$response['success']){
                         dump($response);
 
                         // continue;
                     }
-                }catch(Exception $e){
+                }catch(\Exception $e){
 
                 }
 
