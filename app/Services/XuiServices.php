@@ -141,7 +141,7 @@ class XuiServices
             'id' => $imbount,
             'settings' => json_encode([
                 'clients' => [[
-                    "id"=> $devise->ui_name,
+                    "id"=> $devise->ui_id,
                     "flow"=> "",
                     "email"=> (string) $devise->ui_name.'_'.$server->inbound,
                     "limitIp"=> 0,
