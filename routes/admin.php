@@ -79,6 +79,9 @@ Route::prefix('/admin')->middleware('admin')->name('admin.')->group(function (){
         ->name('devises.create');
     Route::post('users/{user}/devices/store', [AdminDevisController::class, 'store'])
         ->name('devises.store');
+    Route::delete('users/devices/{device}/destroy', [AdminDevisController::class, 'destroy'])
+        ->name('devises.destroy');
+
     Route::resource('/tarrifs',\App\Http\Controllers\Admin\TarrifController::class);
 });
 

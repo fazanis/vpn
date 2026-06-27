@@ -23,13 +23,13 @@
                         <td>{{$item->ui_name}}</td>
                         <td>{{$item->ui_id}}</td>
                         <td>
-                            <a href="{{route('subscription.devises', $item->ui_id)}}">Поделиться</a>
+                            <a href="{{route('subscription.devises', $item->ui_id)}}" target="_blank">Поделиться</a>
                             <a href="{{route('admin.devises.edit', $item)}}">Edit</a>
-                            {{-- <form action="{{ route('admin.users.destroy', $item) }}" method="post">
+                            <form action="{{ route('admin.devises.destroy', $item) }}" method="post">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-danger">Delete</button>
-                            </form> --}}
+                            </form>
 
                         </td>
                     </tr>
