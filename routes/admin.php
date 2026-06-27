@@ -67,6 +67,8 @@ Route::prefix('/admin')->middleware('admin')->name('admin.')->group(function (){
     Route::prefix('servers/{server}')->group(function () {
         Route::resource('server_inbounds', ServerInboundController::class);
     });
+    Route::get('users/delete_not_devise', [\App\Http\Controllers\Admin\UserController::class, 'delete_not_devise'])
+        ->name('delete_not_devise');
     Route::resource('/users',\App\Http\Controllers\Admin\UserController::class);
     // Route::resource('/users/devises',AdminDevisController::class);
     Route::get('users/{user}/devices', [AdminDevisController::class, 'index'])
@@ -81,6 +83,7 @@ Route::prefix('/admin')->middleware('admin')->name('admin.')->group(function (){
         ->name('devises.store');
     Route::delete('users/devices/{device}/destroy', [AdminDevisController::class, 'destroy'])
         ->name('devises.destroy');
+
 
     Route::resource('/tarrifs',\App\Http\Controllers\Admin\TarrifController::class);
 });

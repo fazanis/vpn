@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Devise;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -38,5 +39,13 @@ class UserController extends Controller
     {
         $user->delete();
         return redirect()->back();
+    }
+
+    public function delete_not_devise()
+    {
+        $devises = User::query()
+            ->whereDoesntHave('devise')
+            ->delete();
+        return back();
     }
 }

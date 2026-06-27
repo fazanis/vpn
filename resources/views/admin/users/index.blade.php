@@ -1,7 +1,9 @@
 @extends('layouts.admin')
 @section('content')
     <a href="{{ route('admin.users.create') }}" class="btn btn-success">Добавить</a>
+    <a href="{{ route('admin.delete_not_devise') }}" class="btn btn-danger" >Удалить пользователей без устройств</a>
     <div class="card-body">
+
         <table class="table table-bordered">
             <thead>
                 <tr>
