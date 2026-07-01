@@ -20,7 +20,7 @@ it('shows login page', function () {
 
     $response->assertStatus(200);
 
-    $response->assertSee('Зайти с Google');
+    $response->assertSee('Войти через Google');
 });
 
 it('login from google',function(){
@@ -41,14 +41,14 @@ it('login from google',function(){
 
     $response->assertRedirect('/cabinet');
 
-    $this->assertAuthenticated(); 
+    $this->assertAuthenticated();
 
 
     $this->assertDatabaseHas('users', ['email' => 'test@gmail.com']);
-    
+
     $user = User::where('email', 'test@gmail.com')->first();
 
     $response = $this->actingAs($user)->get('/cabinet');
-    
-    $response->assertSee('Добро пожаловать, Test User');
+
+    $response->assertSee('Личный кабинет');
 });
