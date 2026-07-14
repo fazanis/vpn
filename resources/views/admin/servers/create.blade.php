@@ -63,6 +63,11 @@
                         <input name="password" type="password" class="form-control"
                             value="{{ old('password', $server->password ?? '') }}">
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">token</label>
+                        <input name="token" type="text" class="form-control"
+                            value="{{ old('token', $server->token ?? '') }}">
+                    </div>
                 </div>
                 <div class="card-footer">
                     <button type="submit" class="btn btn-primary">{{isset($server) ? 'Изменить' : 'Добавить'}}</button>

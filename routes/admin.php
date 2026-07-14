@@ -28,7 +28,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('/admin')->middleware('admin')->name('admin.')->group(function (){
     Route::get('/test', function () {
-        dd(1);
+        $servers = Server::get();
+        foreach ($servers as $server) {
+            $xui = \App\Services\Xui\XuiFactory::make($server);
+            dump($xui->getInbounds($server)->json());
+        }
+
     });
     Route::get('/testmail',function (){
         $to_name = 'Иван';
@@ -56,6 +61,8 @@ Route::prefix('/admin')->middleware('admin')->name('admin.')->group(function (){
 
     Route::get('/server/deactivated/{server}',[\App\Http\Controllers\Admin\ServerController::class,'deactivated'])->name('server.deactivated');
     Route::get('/server/updateconnect/{server}',[\App\Http\Controllers\Admin\ServerController::class,'updateconnect'])->name('server.updateconnect');
+    Route::get('/server/{server}/resyncuser',[\App\Http\Controllers\Admin\ServerController::class,'resyncuser'])->name('servers.resyncuser');
+    Route::get('/server/{server}/addInbount',[\App\Http\Controllers\Admin\ServerController::class,'addInbound'])->name('servers.addInbound');
     Route::resource('/servers',\App\Http\Controllers\Admin\ServerController::class);
     Route::prefix('servers/{server}')->group(function () {
         Route::resource('server_inbounds', ServerInboundController::class);

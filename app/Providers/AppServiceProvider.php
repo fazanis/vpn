@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\Xui\XuiManager;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Schema;
@@ -14,7 +15,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(
+            XuiManager::class
+        );
     }
 
     /**

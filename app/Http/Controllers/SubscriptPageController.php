@@ -8,6 +8,7 @@ use App\Models\Server;
 use App\Models\ServerInbound;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Services\Xui\XuiFactory;
 use App\Services\XuiServices;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -18,41 +19,24 @@ use function Symfony\Component\Clock\now;
 
 class SubscriptPageController extends Controller
 {
-    public function index(Request $request,$token)
+    public function index(Request $request,$token,XuiFactory $factory)
     {
 
         $devise = Devise::where('ui_id',$token)->first();
-        $connects = ServerInbound::query()
-        ->select('server_inbounds.*')
-        ->join('servers', 'servers.id', '=', 'server_inbounds.server_id')
-        ->orderBy('servers.priority')->get();
-        // dd($devise);
-        $array = [];
-        foreach($connects as $connect){
-            $array[]=$connect->protocol
-            .'://'.$devise->ui_id
-            .'@'.$connect->server->ip
-            .':'.$connect->port
-            .'?type='.$connect->type
-            .'&encryption='.$connect->encryption
-            .'&path='.$connect->path
-            .'&host='.$connect->host
-            .'&mode='.$connect->mode
-            .'&security='.$connect->security
-            .'&pbk='.$connect->pbk
-            .'&fp='.$connect->fp
-            .'&sni='.$connect->sni
-            .'&sid='.$connect->sid
-            .'&spx='.$connect->spx
-            .'&pqv='.$connect->pqv
-            .'#'.$connect->server->name
-            .''.$connect->server->flag
-            ;
+        $servers = Server::query()->activate()->get();
+        $array=[];
+        foreach ($servers as $server) {
+            $xui= $factory->make($server);
+            $array[] =$xui->subLink($server,$devise);
+        }
 
-         }
-//        dd($array);
+        $subLink='';
+        foreach ($array as $sub) {
+            foreach ($sub as $item){
+                $subLink.= $item."\n";
+            }
+        }
 
-         $result = implode("\n",$array);
         $routing = HappRouting::query()->where('is_active',1)->latest()->first();
 
         if($routing){
@@ -67,7 +51,7 @@ class SubscriptPageController extends Controller
                 str_contains($userAgent, 'V2Ray') ||
                 str_contains($userAgent, 'v2ray')
                 ) {
-                return response($route."\n".$result)
+                return response($route."\n".$subLink)
                     ->header('Content-Type', 'text/plain')
                     ->header('Cache-Control', 'no-store')
                     ->header('Profile-Title', env('APP_NAME'))

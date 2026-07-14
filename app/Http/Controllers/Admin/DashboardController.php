@@ -8,6 +8,7 @@ use App\Models\Server;
 use App\Models\ServerInbound;
 use App\Services\Xui\DTO\ClientDto;
 use App\Services\Xui\Xui;
+use App\Services\Xui\XuiFactory;
 use App\Services\XuiServices;
 use Exception;
 use Illuminate\Http\Client\Pool;
@@ -20,10 +21,14 @@ class DashboardController extends Controller
     public function __invoke()
     {
         $myServers = Server::query()->with('inbounds')->get();
-        $xui = new Xui();
 
-        $servers = $xui->servers->status($myServers);
-        $online=$xui->servers->online($myServers);
+        foreach($myServers as $server) {
+            $xui = XuiFactory::make($server);
+            $servers[] = $xui->status($server);
+            $online[]=$xui->online($server);;
+
+        }
+        //$xui->servers->online($myServers);
 
         $devises = Devise::query()->with('user')->orderByDesc('trafik')->paginate(10);
         return view('admin.dashboard',compact('devises','servers','online'));

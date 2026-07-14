@@ -38,17 +38,23 @@
                             </a>
                         </td>
                         <td>
-                            <a href="{{route('admin.server.updateconnect', $item)}}" class="btn btn-success">
-                                Обновить подключения
-                            </a>
+{{--                            <a href="{{route('admin.servers.addInbound', $item)}}" class="btn btn-success">--}}
+{{--                                Настроить--}}
+{{--                            </a>--}}
+                            <a href="{{route('admin.server.updateconnect',$item)}}"><i class="fa fa-undo" aria-hidden="true"></i></a>
                         </td>
                         <td>
-                            <a href="{{route('admin.servers.edit', $item)}}">Edit</a>
+                            <div class="d-flex align-items-center gap-2">
+                                <a href="{{route('admin.servers.show', $item)}}"><i class="fa fa-eye"></i></a>
+                                <a href="{{route('admin.servers.edit', $item)}}"><i class="fa fa-edit"></i></a>
                             <form action="{{ route('admin.servers.destroy', $item) }}" method="post">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-danger">Удалить</button>
+                                <button type="submit" onclick="return confirm('Вы уверенны?')">
+                                    <i class="fa fa-trash text-danger"></i>
+                                </button>
                             </form>
+                            </div>
                         </td>
                     </tr>
                 @endforeach

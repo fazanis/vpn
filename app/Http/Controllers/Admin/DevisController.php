@@ -27,6 +27,7 @@ class DevisController extends Controller
 
         $devises = Devise::query()
         ->where('user_id',$user)
+            ->where('del',0)
         ->get();
         return view('admin.devises.index',compact('devises','user'));
     }
@@ -44,7 +45,7 @@ class DevisController extends Controller
 
         DeviseCreateJob::dispatch($devise)->onQueue('high');
 
-        return back();
+        return redirect()->route('admin.devises.index',$user);
     }
 
     public function destroy(Devise $device)

@@ -7,7 +7,9 @@ use App\Models\Devise;
 use App\Models\Server;
 use App\Services\DevisesCreateServises;
 use App\Services\DevisesSincServises;
+use App\Services\Xui\Services\ClientService;
 use App\Services\Xui\Xui;
+use App\Services\Xui\XuiFactory;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 
@@ -21,10 +23,9 @@ class DeviseCreateJob implements ShouldQueue
         $this->devise = $devise;
     }
 
-    public function handle(Xui $xui): void
+    public function handle(ClientService $service): void
     {
         $servers = Server::query()->get();
-
-        $xui->clients->createClient($servers,$this->devise);
+        $service->createClient($servers, $this->devise);
     }
 }

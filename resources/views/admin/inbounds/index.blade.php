@@ -29,6 +29,8 @@
                 <td>{{ $server->encryption }}</td>
                 <td>{{ $server->security }}</td>
                 <td>{{ $server->fp }}</td>
+                <td>{{ $server->sni }}</td>
+                <td>{{ $server->sid }}</td>
                 <td>{{ $server->spx }}</td>
                 <td>{{ $server->path }}</td>
                 <td>{{ $server->host }}</td>

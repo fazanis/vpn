@@ -5,6 +5,7 @@ namespace App\Jobs;
 use App\Models\Devise;
 use App\Models\Server;
 use App\Services\DeviseDeleteServises;
+use App\Services\Xui\Services\ClientService;
 use App\Services\Xui\Xui;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -18,10 +19,10 @@ class DeviseDeleteJob implements ShouldQueue
         $this->devise = $devise;
     }
 
-    public function handle(Xui $xui): void
+    public function handle(ClientService $service): void
     {
         $servers = Server::query()->get();
-        $xui->clients->delete($servers,$this->devise);
-//        $deviseDelete->handle($this->devise);
+        $service->deleteClient($servers, $this->devise);
+        $this->devise->delete();
     }
 }

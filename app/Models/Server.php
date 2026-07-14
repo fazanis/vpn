@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Server extends Model
 {
-    protected $fillable=['name','type','ip','port','folder','flag','status','imbound','login','password','priority'];
+    protected $fillable=['name','type','ip','port','folder','flag','status','imbound','login','password','token','priority'];
 
 
     public function scopeActivate($query)
