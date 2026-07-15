@@ -25,7 +25,7 @@
                                 </h3>
 
                                 <div class="card-tools">
-                                <span class="badge
+                                <span class="badge text-primary
                                     {{ $item['count'] > 0 ? 'badge-success' : 'badge-secondary' }}">
                                     {{ $item['count'] }} online
                                 </span>
