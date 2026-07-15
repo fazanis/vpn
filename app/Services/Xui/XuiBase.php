@@ -25,14 +25,13 @@ abstract class XuiBase
             $server,
             'panel/api/server/status'
         );
-
         return ServerStatusDTO::fromRequest($server,$response);
     }
     public function online(Server $server){
         $response= $this->http->request(
-            'GET',
+            'post',
             $server,
-            '/panel/api/clients/onlines'
+            'panel/api/clients/onlines',
         );
         if ($response==null) {
             return [
