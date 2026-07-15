@@ -7,6 +7,7 @@ use App\Models\Devise;
 use App\Models\Server;
 use App\Models\ServerInbound;
 use App\Services\Xui\DTO\ClientDto;
+use App\Services\Xui\Services\ClientService;
 use App\Services\Xui\Xui;
 use App\Services\Xui\XuiFactory;
 use App\Services\XuiServices;
@@ -18,16 +19,17 @@ use function Laravel\Prompts\password;
 
 class DashboardController extends Controller
 {
-    public function __invoke()
+    public function __invoke(ClientService $clientService)
     {
         $myServers = Server::query()->with('inbounds')->get();
 
         foreach($myServers as $server) {
             $xui = XuiFactory::make($server);
             $servers[] = $xui->status($server);
-            $online[]=$xui->online($server);;
 
         }
+        $online=$clientService->clientCount($myServers);;
+
         //$xui->servers->online($myServers);
 
         $devises = Devise::query()->with('user')->orderByDesc('trafik')->paginate(10);

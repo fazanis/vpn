@@ -51,4 +51,13 @@ class ClientService
             }
         }
     }
+
+    public function clientCount(Collection $servers)
+    {
+        $response=[];
+        foreach ($servers as $server) {
+            $response[]=$this->factory->make($server)->online($server);
+        }
+        return $response;
+    }
 }

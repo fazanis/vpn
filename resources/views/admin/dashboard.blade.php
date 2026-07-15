@@ -14,7 +14,7 @@
             </div>
 
             <div class="row">
-                @foreach($online as $item)
+            @foreach($online as $item)
                     <div class="col-md-6">
                         <div class="card card-outline
                         {{ $item['count'] > 0 ? 'card-success' : 'card-secondary' }}">
