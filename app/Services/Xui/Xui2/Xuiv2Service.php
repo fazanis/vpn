@@ -14,7 +14,7 @@ class Xuiv2Service extends XuiBase
 
     protected function deviseEmail($inbound, $devise)
     {
-        return $devise->ui_name . '_' . $devise->id.'_'.$inbound->inbound;
+        return $devise->ui_name .'_'.$inbound->inbound;
     }
     public function createClient(Server $server,Devise $devise)
     {

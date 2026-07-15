@@ -87,31 +87,30 @@ class ServerController extends Controller
 
     public function updateconnect(Server $server,XuiFactory $xuiFactory)
     {
-        $xui=$xuiFactory->make($server);
-        $imbounds=$xui->getInbounds($server);
-        $xuiIds = collect($imbounds->json('obj'))->pluck('id')->toArray();
+        try {
+            ServerInbound::where('server_id',$server->id)->whereNotIn('inbound', $xuiIds)->delete();
+            if (!$imbounds->json('obj')){
+                return back()->with('error','Ошибка подключения сервера '.$server->ip);
+            }
+            foreach($imbounds->json('obj') as $imbound){
+                $array=InboundsDTO::make($imbound);
 
-        ServerInbound::where('server_id',$server->id)->whereNotIn('inbound', $xuiIds)->delete();
-        if (!$imbounds->json('obj')){
-            return back()->with('error','Ошибка подключения сервера '.$server->ip);
-        }
-        foreach($imbounds->json('obj') as $imbound){
-            $array=InboundsDTO::make($imbound);
-//            dd($array);
-            try {
                 ServerInbound::query()->updateOrCreate([
                     'server_id'=>$server->id,
                     'protocol'=>$array->protocol,
                     'type'=>$array->network,
+//                    'port'=>$array->port,
                 ],(array)$array);
-            }catch (\Exception $exception){
-                dd($exception);
-            }
 
 
             DeviseSincJob::dispatch($server)->onQueue('low');
         }
-
+        $xui=$xuiFactory->make($server);
+        $imbounds=$xui->getInbounds($server);
+        $xuiIds = collect($imbounds->json('obj'))->pluck('id')->toArray();
+        }catch (\Exception $exception){
+            return back()->with('error',"Ошибка доступа к серверу {$exception->getMessage()}");
+        }
         return back()->with('success','Подключение успешно обновлено '.$server->ip);
     }
 
@@ -125,5 +124,6 @@ class ServerController extends Controller
     {
         $xui = $xuiFactory->make($server);
         $xui->createInbound($server);
+        DeviseSincJob::dispatch($server)->onQueue('low');
     }
 }

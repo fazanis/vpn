@@ -23,7 +23,7 @@ class SubscriptPageController extends Controller
     {
 
         $devise = Devise::where('ui_id',$token)->first();
-        $servers = Server::query()->activate()->get();
+        $servers = Server::query()->activate()->orderBy('priority')->get();
         $array=[];
         foreach ($servers as $server) {
             $xui= $factory->make($server);

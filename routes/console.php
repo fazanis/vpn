@@ -18,3 +18,5 @@ Schedule::command(\App\Console\Commands\Sinc\CountTrafikCommand::class)->hourly(
 
 Schedule::command(\App\Console\Commands\SendMailWithTelegramLink::class)->dailyAt('12:00');
 
+Schedule::command(\App\Console\Commands\TakeServerStatus::class)->everyTwoHours();
+

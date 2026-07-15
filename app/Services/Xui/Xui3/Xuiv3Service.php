@@ -93,37 +93,113 @@ class Xuiv3Service extends XuiBase
 //    }
     public function createInbound(Server $server)
     {
-        $array = [
-            "enable" => true,
-            "remark" => "VLESS-8443",
-            "listen" => "",
-            "port" => 8443,
-            "protocol" => "vless",
-            "expiryTime" => 0,
-            "total" => 0,
-            "settings"=>[
-                "clients"=>[],
-                "decryption"=>"none",
-                "fallbacks"=> []
-            ],
-            "streamSettings"=>[
-                "network"=> "tcp",
-                "security"=>"reality",
-                "realitySettings"=> [
-                    "show"=> false,
-                    "dest"=> "..."
-                ],
-            ],
+        $response = $this->http->request('get', $server, 'panel/api/server/getNewX25519Cert');
+        $getNewmldsa65 = $this->http->request('get', $server, 'panel/api/server/getNewmldsa65');
+//        dd($getNewmldsa65->json('obj'));
+        $payload = [
+            'remark' => 'test',
+            'enable' => true,
+            'listen' => '',
+            'port' => 2222,
+            'protocol' => 'vless',
+            'expiryTime' => 0,
+            'total' => 0,
 
-            "sniffing"=>[
-                "enabled"=> true,
-                "destOverride"=> [
-                    "http",
-                    "tls"
-                ]
-            ]
+            'settings' => json_encode([
+                'clients' => [],
+                'decryption' => 'none',
+                'fallbacks' => [],
+            ], JSON_UNESCAPED_SLASHES),
+
+            'streamSettings' => json_encode([
+                'network' => 'tcp',
+                'security' => 'reality',
+
+                'tcpSettings' => [
+                    'acceptProxyProtocol' => false,
+                    'header' => [
+                        'type' => 'none',
+                    ],
+                ],
+
+                'realitySettings' => [
+                    'show' => false,
+                    'xver' => 0,
+                    'target'=>"google.com:443",
+                    'dest' => "google.com:443",                // google.com:443
+                    'serverNames' => [
+                        "google.com",                // google.com
+                    ],
+                    'privateKey' => $response->json('obj.privateKey'),
+                    'minClient' => '',
+                    'maxClient' => '',
+                    'maxTimediff' => 0,
+                    'shortIds' => [
+                        'asdadasdasd',
+                    ],
+                    "mldsa65Seed"=> $getNewmldsa65->json('obj.seed'),
+                    'settings' => [
+                        'publicKey' =>  $response->json('obj.publicKey'),
+                        'fingerprint' => "firefox", // chrome
+                        'serverName' => "google.com",
+                        'spiderX' => '/',
+                        'mldsa65Verify'=>$getNewmldsa65->json('obj.verify')
+                    ],
+                ],
+            ], JSON_UNESCAPED_SLASHES),
+
+            'sniffing' => json_encode([
+                'enabled' => true,
+                'destOverride' => [
+                    'http',
+                    'tls',
+                    'quic',
+                    'fakedns',
+                ],
+                'metadataOnly' => false,
+                'routeOnly' => false,
+            ], JSON_UNESCAPED_SLASHES),
+
+            'allocate' => json_encode([
+                'strategy' => 'always',
+                'refresh' => 5,
+                'concurrency' => 3,
+            ], JSON_UNESCAPED_SLASHES),
         ];
-        $response = $this->http->request('post', $server, 'panel/api/inbounds/add', $array);
+
+//        $array = [
+//            "enable" => true,
+//            "remark" => "VLESS-8443",
+//            "listen" => "",
+//            "port" => 8443,
+//            "protocol" => "vless",
+//            "expiryTime" => 0,
+//            "total" => 0,
+//            "settings"=>[
+//                "publicKey"=> $response->json('obj.publicKey'),
+//                "clients"=>[],
+//                "decryption"=>"none",
+//                "fallbacks"=> []
+//            ],
+//            "streamSettings"=>[
+//                "network"=> "tcp",
+//                "security"=>"reality",
+//                "realitySettings"=> [
+//                    "privateKey"=>$response->json('obj.privateKey'),
+//                    "show"=> false,
+//                    "dest"=> "..."
+//                ],
+//            ],
+//
+//            "sniffing"=>[
+//                "enabled"=> true,
+//                "destOverride"=> [
+//                    "http",
+//                    "tls"
+//                ]
+//            ]
+//        ];
+        $response = $this->http->request('post', $server, 'panel/api/inbounds/add', $payload);
         dd($response->json());
     }
 }
