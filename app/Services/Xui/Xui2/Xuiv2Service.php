@@ -119,4 +119,8 @@ class Xuiv2Service extends XuiBase
             'count'=>count($response->json('obj') ?? [])
         ];
     }
+    public function resetAllTraffics(Server $server)
+    {
+        return $this->http->request('post', $server,'panel/api/inbounds/resetAllTraffics');
+    }
 }

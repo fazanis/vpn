@@ -103,6 +103,10 @@ class Xuiv3Service extends XuiBase
             'count'=>count($response->json('obj') ?? [])
         ];
     }
+    public function resetAllTraffics(Server $server)
+    {
+        return $this->http->request('post', $server,'panel/api/clients/resetAllTraffics');
+    }
     public function createInbound(Server $server)
     {
         $response = $this->http->request('get', $server, 'panel/api/server/getNewX25519Cert');
