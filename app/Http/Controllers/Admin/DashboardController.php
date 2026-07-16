@@ -21,7 +21,7 @@ class DashboardController extends Controller
 {
     public function __invoke(ClientService $clientService)
     {
-        $myServers = Server::query()->with('inbounds')->get();
+        $myServers = Server::query()->with('inbounds')->orderBy('priority')->get();
 
         foreach($myServers as $server) {
             $xui = XuiFactory::make($server);
