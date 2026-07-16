@@ -62,7 +62,6 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
-            <a href="{{route('admin.reset.traffik')}}" class="btn btn-danger">Сбросить трафик</a>
             <div class="table-responsive">
                 <table class="table table-bordered table-sm align-middle">
                     <thead>
@@ -132,6 +131,7 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
+            <a href="{{route('admin.reset.traffik')}}" class="btn btn-danger">Сбросить трафик</a>
             <div class="table-responsive">
                 <table class="table table-bordered" role="table">
                     <thead>
