@@ -105,7 +105,7 @@ class Xuiv3Service extends XuiBase
     }
     public function resetAllTraffics(Server $server)
     {
-        return $this->http->request('post', $server,'panel/api/clients/resetAllTraffics');
+        $this->http->request('post', $server,'panel/api/clients/resetAllTraffics');
     }
     public function createInbound(Server $server)
     {
