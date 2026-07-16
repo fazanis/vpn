@@ -60,6 +60,7 @@ Route::prefix('/admin')->middleware('admin')->name('admin.')->group(function (){
     Route::get('/',\App\Http\Controllers\Admin\DashboardController::class)->name('dashboard');
 
     Route::get('/server/deactivated/{server}',[\App\Http\Controllers\Admin\ServerController::class,'deactivated'])->name('server.deactivated');
+    Route::get('/server/resetTraffik',[\App\Http\Controllers\Admin\ServerController::class,'resetTraffik'])->name('reset.traffik');
     Route::get('/server/updateconnect/{server}',[\App\Http\Controllers\Admin\ServerController::class,'updateconnect'])->name('server.updateconnect');
     Route::get('/server/{server}/resyncuser',[\App\Http\Controllers\Admin\ServerController::class,'resyncuser'])->name('servers.resyncuser');
     Route::get('/server/{server}/addInbount',[\App\Http\Controllers\Admin\ServerController::class,'addInbound'])->name('servers.addInbound');

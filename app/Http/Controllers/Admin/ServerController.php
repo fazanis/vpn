@@ -126,4 +126,11 @@ class ServerController extends Controller
         $xui->createInbound($server);
         DeviseSincJob::dispatch($server)->onQueue('low');
     }
+
+    public function resetTraffik(ClientService $clientService)
+    {
+        $servers= Server::query()->get();
+        $clientService->resetAllTraffics($servers);
+        return back();
+    }
 }

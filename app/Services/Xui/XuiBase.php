@@ -48,6 +48,10 @@ abstract class XuiBase
         ];
     }
 
+    public function resetAllTraffics(Server $server)
+    {
+        return $this->http->request('post', $server,'panel/api/inbounds/resetAllTraffics');
+    }
     public function createClients(Server $server,Devise $devise){}
     public function delAllClients(Server $server){}
 }
