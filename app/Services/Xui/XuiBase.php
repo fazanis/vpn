@@ -27,26 +27,7 @@ abstract class XuiBase
         );
         return ServerStatusDTO::fromRequest($server,$response);
     }
-    public function online(Server $server){
-        $response= $this->http->request(
-            'post',
-            $server,
-            'panel/api/clients/onlines',
-        );
-        if ($response==null) {
-            return [
-                'sertverIp'=>$server->ip.' '.$server->name,
-                'users'=>[],
-                'count'=>0
-            ];
-        }
 
-        return [
-            'sertverIp'=>$server->ip.' '.$server->name,
-            'users'=>$response->json('obj'),
-            'count'=>count($response->json('obj') ?? [])
-        ];
-    }
 
     public function resetAllTraffics(Server $server)
     {

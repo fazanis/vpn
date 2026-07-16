@@ -83,14 +83,26 @@ class Xuiv3Service extends XuiBase
         }
         return $array;
     }
+    public function online(Server $server){
+        $response= $this->http->request(
+            'post',
+            $server,
+            'panel/api/clients/onlines',
+        );
+        if ($response==null) {
+            return [
+                'sertverIp'=>$server->ip.' '.$server->name,
+                'users'=>[],
+                'count'=>0
+            ];
+        }
 
-//    public function subLink(Server $server,Devise $devise)
-//    {
-////        return $this->http->request('get', $server,"panel/api/inbounds/list/slim")->json('obj');
-////        return $this->http->request('get', $server,"panel/api/clients/get/{$this->deviseEmail($devise)}")->json('obj');
-//        return $this->http->request('get', $server,"panel/api/clients/subLinks/{$devise->ui_id}")->json('obj');
-////        return $this->http->request('get', $server,"panel/api/clients/get/{$this->deviseEmail($devise)}")->json();
-//    }
+        return [
+            'sertverIp'=>$server->ip.' '.$server->name,
+            'users'=>$response->json('obj'),
+            'count'=>count($response->json('obj') ?? [])
+        ];
+    }
     public function createInbound(Server $server)
     {
         $response = $this->http->request('get', $server, 'panel/api/server/getNewX25519Cert');
