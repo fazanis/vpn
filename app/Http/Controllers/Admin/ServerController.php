@@ -131,6 +131,7 @@ class ServerController extends Controller
     {
         $servers= Server::query()->get();
         $clientService->resetAllTraffics($servers);
+        Devise::query()->update(['trafik' => 0]);
         return back();
     }
 }
