@@ -64,7 +64,7 @@ class ClientService
     public function resetAllTraffics(Collection $servers)
     {
         foreach ($servers as $server) {
-            $this->factory->make($server)->resetAllTraffics($server)->json();
+            $this->factory->make($server)->resetAllTraffics($server);
         }
     }
 }
