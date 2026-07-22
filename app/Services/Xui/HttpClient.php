@@ -17,7 +17,9 @@ class HttpClient
     )
     {
         try {
-            $http = Http::withoutVerifying();
+            $http = Http::withoutVerifying()
+                ->timeout(10)
+                ->connectTimeout(5);
             if ($server->token) {
                 $http = $http->withToken($server->token);
             } else {

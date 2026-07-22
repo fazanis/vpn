@@ -2,8 +2,11 @@
 
 namespace App\Console\Commands\Sinc;
 
+use App\Models\Devise;
 use App\Models\Server;
 use App\Services\CountTrafikServises;
+use App\Services\Xui\Services\ClientService;
+use App\Services\Xui\XuiFactory;
 use App\Services\XuiServices;
 use Illuminate\Console\Command;
 
@@ -17,18 +20,21 @@ class CountTrafikCommand extends Command
 
     public function handle()
     {
-        $devises = \App\Models\Devise::query()->get();
-        $servers = Server::get();
-        try {
-            $xui = new \App\Services\Xui\Xui();
-            foreach ($devises as $devise){
-                $traf = $xui->clients->getTrafik($servers,$devise);
-                $devise->update(['trafik' => $traf]);
-                $this->info($devise->name.' '.$traf);
-                sleep(0.5);
+        $servers = Server::query()->get();
+
+        $result=[];
+        foreach ($servers as $server) {
+            $xui = XuiFactory::make($server);
+            $response = $xui->getTraffik($server);
+            foreach ($response as $id=>$value) {
+                if (!isset($result[$id])) {
+                    $result[$id] = 0;
+                }
+                $result[$id]+=$value;
             }
-        }catch (\Exception $exception){
-            $this->error($exception->getMessage());
+        }
+        foreach($result as $key=>$value){
+            Devise::query()->where('ui_id',$key)->update(['trafik' => $value]);
         }
     }
 }

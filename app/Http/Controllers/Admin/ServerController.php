@@ -12,6 +12,7 @@ use App\Services\Xui\Services\ClientService;
 use App\Services\Xui\Xui;
 use App\Services\Xui\XuiFactory;
 use App\Services\XuiServices;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 
@@ -87,37 +88,38 @@ class ServerController extends Controller
 
     public function updateconnect(Server $server,XuiFactory $xuiFactory)
     {
+
         $xui=$xuiFactory->make($server);
         $imbounds=$xui->getInbounds($server);
+        if ($imbounds==null){
+            return back()->with('error','Ошибка подключения сервера '.$server->ip);
+        }
         $xuiIds = collect($imbounds->json('obj'))->pluck('id')->toArray();
 
         ServerInbound::where('server_id',$server->id)->whereNotIn('inbound', $xuiIds)->delete();
-        if (!$imbounds->json('obj')){
-            return back()->with('error','Ошибка подключения сервера '.$server->ip);
-        }
+
         foreach($imbounds->json('obj') as $imbound){
             $array=InboundsDTO::make($imbound);
-            try {
+
                 ServerInbound::query()->updateOrCreate([
                     'server_id'=>$server->id,
                     'protocol'=>$array->protocol,
                     'type'=>$array->network,
-//                    'port'=>$array->port,
                 ],(array)$array);
-            }catch (\Exception $exception){
-                dd($exception);
-            }
+
 
             DeviseSincJob::dispatch($server)->onQueue('low');
         }
 
         return back()->with('success','Подключение успешно обновлено '.$server->ip);
+
     }
 
     public function resyncuser(Server $server)
     {
         DeviseSincJob::dispatch($server)->onQueue('low');
         return back();
+
     }
 
     public function addInbound(Server $server,XuiFactory $xuiFactory)

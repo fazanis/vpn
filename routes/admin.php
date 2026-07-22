@@ -11,10 +11,12 @@ use App\Http\Controllers\Cabinet\Auth\SocialController;
 use App\Http\Controllers\Cabinet\SubscriptionController;
 use App\Http\Controllers\SubscriptPageController;
 use App\Http\Controllers\WebhookController;
+use App\Models\Devise;
 use App\Models\Server;
 use App\Models\ServerInbound;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Services\Xui\XuiFactory;
 use App\Services\XuiServices;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Events\Verified;
@@ -28,11 +30,23 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('/admin')->middleware('admin')->name('admin.')->group(function (){
     Route::get('/test', function () {
-        $servers = Server::get();
-        foreach ($servers as $server) {
-            $xui = \App\Services\Xui\XuiFactory::make($server);
-            dump($xui->getInbounds($server)->json());
-        }
+        $servers = Server::query()->get();
+
+            $result=[];
+            foreach ($servers as $server) {
+                $xui = XuiFactory::make($server);
+                $response = $xui->getTraffik($server);
+                foreach ($response as $id=>$value) {
+                    if (!isset($result[$id])) {
+                        $result[$id] = 0;
+                    }
+                    $result[$id]+=$value;
+                }
+            }
+                foreach($result as $key=>$value){
+                    Devise::query()->where('ui_id',$key)->update(['trafik' => $value]);
+                }
+
 
     });
     Route::get('/testmail',function (){

@@ -53,6 +53,21 @@ class Xuiv3Service extends XuiBase
         };
 
     }
+
+    public function getTraffik(Server $server)
+    {
+        $response = $this->http->request('get',$server,"panel/api/clients/list");
+        foreach ($response->json('obj') as $inbound) {
+            $email = $inbound['uuid'] ?? '';
+            $total = ($inbound['traffic']['up'] ?? 0) + ($inbound['traffic']['down'] ?? 0);
+            if (!isset($result[$email])) {
+                $result[$email] = 0;
+            }
+
+            $result[$email]+=$total;
+        }
+        return $result;
+    }
     public function subLink(Server $server,Devise $devise)
     {
         $array = [];

@@ -61,6 +61,9 @@ class Xuiv2Service extends XuiBase
     public function delAllClients(Server $server)
     {
         $r = $this->http->request('get', $server, 'panel/api/inbounds/list');
+        if ($r==null){
+            return;
+        }
         foreach($r->json('obj') as $client){
             $id=$client['id'];
             $client = json_decode($client['settings']);
@@ -122,5 +125,24 @@ class Xuiv2Service extends XuiBase
     public function resetAllTraffics(Server $server)
     {
         $this->http->request('post', $server,'panel/api/inbounds/resetAllTraffics');
+    }
+
+    public function getTraffik(Server $server)
+    {
+        $response =  $this->http->request('get',$server,"panel/api/inbounds/list");
+        $total=0;
+        $result=[];
+        foreach ($response->json('obj') as $inbound) {
+            $inbound=json_decode($inbound['settings'])->clients;
+            foreach($inbound as $client){
+                $email = $client->id ?? '';
+                $total= ($client->totalGB ?? 0);
+                if (!isset($result[$email])) {
+                    $result[$email] = 0;
+                }
+                $result[$email]+=$total;
+            };
+        }
+        return $result;
     }
 }

@@ -52,6 +52,15 @@ class ClientService
         }
     }
 
+    public function getTraffik(Collection $servers,Collection $devise)
+    {
+        foreach ($servers as $server) {
+            foreach ($devise as $devise) {
+                $response = $this->factory->make($server)->getTraffik($server,$devise);
+                dd($response);
+            }
+        }
+    }
     public function clientCount(Collection $servers)
     {
         $response=[];
