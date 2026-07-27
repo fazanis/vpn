@@ -136,7 +136,7 @@ class Xuiv2Service extends XuiBase
             $inbound=json_decode($inbound['settings'])->clients;
             foreach($inbound as $client){
                 $email = $client->id ?? '';
-                $total= ($client->totalGB ?? 0);
+                $total= (($client->up+$client->down) ?? 0);
                 if (!isset($result[$email])) {
                     $result[$email] = 0;
                 }
