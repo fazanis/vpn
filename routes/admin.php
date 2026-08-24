@@ -54,10 +54,11 @@ Route::prefix('/admin')->middleware('admin')->name('admin.')->group(function (){
         $to_email = 'kravchuk001@gmail.com';
         $data = array('name'=>"Sam Jose", "body" => "Test mail");
 
-        Mail::send('emails.emails', $data, function($message) use ($to_name, $to_email) {
+        $r = Mail::send('emails.emails', $data, function($message) use ($to_name, $to_email) {
             $message->to($to_email, $to_name)->subject('Artisans Web Testing Mail');
             $message->from('admin@family-nett.ru','Artisans Web');
         });
+        dd($r);
         return 'ok';
     })->name('test.mail');
     Route::get('/webhook-data',function(){

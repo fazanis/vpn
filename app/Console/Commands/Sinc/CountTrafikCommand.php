@@ -33,7 +33,6 @@ class CountTrafikCommand extends Command
                 $result[$id]+=$value;
             }
         }
-//        dd($result);
         foreach($result as $key=>$value){
             Devise::query()->where('ui_id',$key)->update(['trafik' => $value]);
         }
