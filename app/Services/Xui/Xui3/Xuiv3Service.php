@@ -57,10 +57,13 @@ class Xuiv3Service extends XuiBase
     public function getTraffik(Server $server)
     {
         $response = $this->http->request('get',$server,"panel/api/clients/list");
-        if (!$response){
+        if (!$response) {
             return [];
         }
-        foreach ($response->json('obj') as $inbound) {
+
+        $obj = $response->json('obj') ?? [];
+        $result = [];
+        foreach ($obj as $inbound) {
             $email = $inbound['uuid'] ?? '';
             $total = ($inbound['traffic']['up'] ?? 0) + ($inbound['traffic']['down'] ?? 0);
             if (!isset($result[$email])) {
