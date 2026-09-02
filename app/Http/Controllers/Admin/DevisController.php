@@ -56,4 +56,10 @@ class DevisController extends Controller
 
         return back();
     }
+
+    public function allDevise()
+    {
+        $devises = Devise::query()->get();
+        return view('admin.devises.all',compact('devises'));
+    }
 }

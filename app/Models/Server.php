@@ -19,4 +19,9 @@ class Server extends Model
     {
         return $this->hasMany(ServerInbound::class,'server_id','id');
     }
+
+    public function serverLink()
+    {
+        return $this->type.'://'.$this->ip.':'.$this->port.'/'.$this->folder;
+    }
 }

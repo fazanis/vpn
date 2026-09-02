@@ -22,14 +22,18 @@ class SubscriptPageController extends Controller
     public function index(Request $request,$token,XuiFactory $factory)
     {
 
-        $devise = Devise::where('ui_id',$token)->first();
-        $servers = Server::query()->activate()->orderBy('priority')->get();
+        $devise = Devise::where('ui_id',$token)->firstOrFail();
+
+        $servers = Server::query()->activate()->orderBy('priority')
+            ->get();
         $array=[];
+
         foreach ($servers as $server) {
             $xui= $factory->make($server);
             $array[] =$xui->subLink($server,$devise);
         }
 
+//        dd(array_values(array_filter($array)));
         $subLink='';
         foreach ($array as $sub) {
             foreach ($sub as $item){

@@ -14,6 +14,8 @@
                     <th>folder</th>
                     <th>status</th>
                     <th></th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -38,22 +40,20 @@
                             </a>
                         </td>
                         <td>
-{{--                            <a href="{{route('admin.servers.addInbound', $item)}}" class="btn btn-success">--}}
-{{--                                Настроить--}}
-{{--                            </a>--}}
-                            <a href="{{route('admin.server.updateconnect',$item)}}"><i class="fa fa-undo" aria-hidden="true"></i></a>
+                            <a href="{{route('admin.server.updateconnect',$item)}}"  title="Обновить подключение"><i class="fa fa-undo" aria-hidden="true"></i></a>
                         </td>
                         <td>
                             <div class="d-flex align-items-center gap-2">
-                                <a href="{{route('admin.servers.show', $item)}}"><i class="fa fa-eye"></i></a>
-                                <a href="{{route('admin.servers.edit', $item)}}"><i class="fa fa-edit"></i></a>
+                                <a href="{{route('admin.servers.show', $item)}}" title="Просмотр параметров сервер"><i class="fa fa-eye"></i></a>
+                                <a href="{{route('admin.servers.edit', $item)}}" title="Редактировать сервер"><i class="fa fa-edit"></i></a>
                             <form action="{{ route('admin.servers.destroy', $item) }}" method="post">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" onclick="return confirm('Вы уверенны?')">
+                                <button type="submit" onclick="return confirm('Вы уверенны?')" title="Удалить сервер">
                                     <i class="fa fa-trash text-danger"></i>
                                 </button>
                             </form>
+                                <a href="{{$item->serverLink()}}" target="_blank" title="Перейти к серверу"><i class="fa fa-sign-out"></i></a>
                             </div>
                         </td>
                     </tr>

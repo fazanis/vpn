@@ -30,7 +30,10 @@ class DeviseSincJob implements ShouldQueue
         try {
             $devises = Devise::get();
             $xui = $xuiFactory->make($this->server);
-            $xui->delAllClients($this->server);
+            foreach ($devises as $devise) {
+                $clientService->deleteClient($this->server,$devise);
+            }
+//            $xui->delAllClients($this->server);
             $clientService->createClients($this->server,$devises);
         } catch (\Illuminate\Http\Client\ConnectionException $e) {
             throw $e;

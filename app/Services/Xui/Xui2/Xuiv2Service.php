@@ -4,7 +4,10 @@ namespace App\Services\Xui\Xui2;
 
 use App\Models\Devise;
 use App\Models\Server;
+use App\Models\ServerInbound;
+use App\Services\Xui\DTO\InboundsDTO;
 use App\Services\Xui\DTO\ServerStatusDTO;
+use App\Services\Xui\DTO\Stream\TcpSettingsDto;
 use App\Services\Xui\HttpClient;
 use App\Services\Xui\XuiBase;
 use Illuminate\Support\Collection;
@@ -12,18 +15,20 @@ use Illuminate\Support\Collection;
 class Xuiv2Service extends XuiBase
 {
 
-    protected function deviseEmail($inbound, $devise)
+    protected function deviseEmail($inboundId, $devise)
     {
-        return $devise->ui_name .'_'.$inbound->inbound;
+        return $devise->ui_name .'_'.$inboundId;
     }
     public function createClient(Server $server,Devise $devise)
     {
-        foreach ($server->inbounds as $inbound) {
+
+        foreach ($this->getInbounds($server)->json('obj') as $inbound) {
+
             $clients = [];
                 $clients[] = [
                     'id' => $devise->ui_id,
                     'flow' => "",
-                    'email' => (string)$this->deviseEmail($inbound, $devise),
+                    'email' => (string)$this->deviseEmail($inbound['id'], $devise),
                     'limitIp' => 0,
                     'totalGB' => 0,
                     'expiryTime' => 0,
@@ -35,7 +40,7 @@ class Xuiv2Service extends XuiBase
                 ];
 
             $data = [
-                'id' => $inbound->inbound,
+                'id' => $inbound['id'],
                 'settings' => json_encode([
                     'clients' => $clients
                 ])
@@ -73,14 +78,25 @@ class Xuiv2Service extends XuiBase
 
         }
     }
-    public function subLink(Server $server,Devise $devise)
+    public function subLink(Server $server,Devise $devise){
+        $links=[];
+        foreach ($server->load('inbounds')->inbounds as $inbound) {
+            if ($inbound->sub_template){
+                $links[] = str_replace('{uiid}', $devise->ui_id, $inbound->sub_template);
+            }
+        }
+
+        return $links;
+    }
+    public function makeLink(Server $server,ServerInbound $connect,Devise $devise)
     {
-        $array = [];
-        foreach($server->inbounds as $connect){
+
+//        $array = [];
+//        foreach($server as $connect){
             $url='';
             $url.=$connect->protocol
-                .'://'.$devise->ui_id
-                .'@'.$connect->server->ip
+                .'://'.'{uiid}'
+                .'@'.$server->ip
                 .':'.$connect->port
                 .'?type='.$connect->type
                 .'&encryption='.$connect->encryption;
@@ -96,11 +112,31 @@ class Xuiv2Service extends XuiBase
             $url.='&sid='.$connect->sid;
             $url.='&spx='.$connect->spx;
             $url.='&pqv='.$connect->pqv;
-            $url.='#'.$connect->server->name;
-            $url.=''.$connect->server->flag;
-            $array[]=$url;
+            $url.='#'.$server->name;
+            $url.=''.$server->flag;
+//            $array[]=$url;
+//        }
+        return $url;
+    }
+
+    public function subTemplate(Server $server)
+    {
+
+        $devise = Devise::query()->first();
+//            new Devise([
+//            'ui_id' => 'ff64d556-f12e-4b9c-86b1-3244kjghkj1234',
+//        ]);
+        $inbounds = $this->getInbounds($server);
+        foreach ($inbounds->json('obj') as $inbound){
+            $r = InboundsDTO::make($inbound);
+            $inbound=new ServerInbound(
+                (array)$r
+            );
+
+           $result[] = $this->makeLink($server,$inbound,$devise);
+//           $this->deleteClient($server,$devise);
         }
-        return $array;
+        return $result;
     }
     public function online(Server $server){
         $response= $this->http->request(

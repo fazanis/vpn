@@ -9,6 +9,7 @@ class ServerInbound extends Model
     protected $fillable = [
         'inbound',
         'server_id',
+        'sub_template',
         'protocol',
         'port',
         'type',

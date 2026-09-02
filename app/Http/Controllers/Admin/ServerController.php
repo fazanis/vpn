@@ -88,28 +88,51 @@ class ServerController extends Controller
 
     public function updateconnect(Server $server,XuiFactory $xuiFactory)
     {
+        try {
 
+        $server->inbounds()->delete();
         $xui=$xuiFactory->make($server);
+
         $imbounds=$xui->getInbounds($server);
+
         if ($imbounds==null){
-            return back()->with('error','Ошибка подключения сервера '.$server->ip);
+            $server->update(['status'=>'inactive']);
+            return back()->with('error',"Сервер не доступен {$server->name}");
         }
-        $xuiIds = collect($imbounds->json('obj'))->pluck('id')->toArray();
-
-        ServerInbound::where('server_id',$server->id)->whereNotIn('inbound', $xuiIds)->delete();
-
-        foreach($imbounds->json('obj') as $imbound){
-            $array=InboundsDTO::make($imbound);
-
-                ServerInbound::query()->updateOrCreate([
-                    'server_id'=>$server->id,
-                    'protocol'=>$array->protocol,
-                    'type'=>$array->network,
-                ],(array)$array);
-
-
-            DeviseSincJob::dispatch($server)->onQueue('low');
+        if($imbounds->json('obj')==[]){
+            return back()->with('error',"Настройте входящие подключения в нанеле 3x-ui для сервера {$server->name}");
         }
+
+
+        foreach($xui->subTemplate($server) as $item)
+        {
+            $server->inbounds()->create(['sub_template'=>$item]);
+        }
+        DeviseSincJob::dispatch($server)->onQueue('low');
+        }catch (ConnectionException $e) {
+
+        }
+////        dd($imbounds->json('obj'));
+//        if ($imbounds==null){
+//            return back()->with('error','Ошибка подключения сервера '.$server->ip);
+//        }
+//        $xuiIds = collect($imbounds->json('obj'))->pluck('id')->toArray();
+//
+//        ServerInbound::where('server_id',$server->id)->whereNotIn('inbound', $xuiIds)->delete();
+//
+//        foreach($imbounds->json('obj') as $imbound){
+//            dd($xui->getSubLinksFromImbaund($imbound));
+//            $array=InboundsDTO::make($imbound);
+////
+////                ServerInbound::query()->updateOrCreate([
+////                    'server_id'=>$server->id,
+////                    'protocol'=>$array->protocol,
+////                    'type'=>$array->network,
+////                ],(array)$array);
+////
+////
+////            DeviseSincJob::dispatch($server)->onQueue('low');
+//        }
 
         return back()->with('success','Подключение успешно обновлено '.$server->ip);
 

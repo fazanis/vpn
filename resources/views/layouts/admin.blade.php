@@ -314,14 +314,14 @@
                                 </p>
                             </a>
                         </li>
-{{--                        <li class="nav-item menu-open">--}}
-{{--                            <a href="{{route('admin.devises.index')}}" class="nav-link active">--}}
-{{--                                <i class="nav-icon bi bi-speedometer"></i>--}}
-{{--                                <p>--}}
-{{--                                    Устройства--}}
-{{--                                </p>--}}
-{{--                            </a>--}}
-{{--                        </li>--}}
+                        <li class="nav-item menu-open">
+                            <a href="{{route('admin.all.devises')}}" class="nav-link active">
+                                <i class="nav-icon bi bi-speedometer"></i>
+                                <p>
+                                    Устройства
+                                </p>
+                            </a>
+                        </li>
                         <li class="nav-item menu-open">
                             <a href="{{route('admin.tarrifs.index')}}" class="nav-link active">
                                 <i class="nav-icon bi bi-speedometer"></i>

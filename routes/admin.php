@@ -30,24 +30,51 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('/admin')->middleware('admin')->name('admin.')->group(function (){
     Route::get('/test', function () {
-        $servers = Server::query()->get();
+        $servers = Server::query()->whereIn('id',[8,13])->get();
+        $devise = Devise::find(1);
+        $links = [];
+        foreach ($servers as $server){
+            $xui = XuiFactory::make($server);
+            try {
+                $links[] = $xui->subLink($server,$devise);
+            }catch (Exception $exception){
 
-            $result=[];
-            foreach ($servers as $server) {
-                $xui = XuiFactory::make($server);
-                $response = $xui->getTraffik($server);
-                foreach ($response as $id=>$value) {
-                    if (!isset($result[$id])) {
-                        $result[$id] = 0;
-                    }
-                    $result[$id]+=$value;
-                }
             }
-                foreach($result as $key=>$value){
-                    Devise::query()->where('ui_id',$key)->update(['trafik' => $value]);
-                }
+        }
+        $links = collect($links)
+            ->flatten()
+            ->implode("\n");
+        dd($links);
+      $str = "vless://a9de80ea-b2e9-4f8f-bb83-ddaaafb5858f@192.168.2.50:443?encryption=none&extra=%7B%22mode%22%3A%22auto%22%2C%22xPaddingBytes%22%3A%22100-1000%22%7D&fp=firefox&host=&mode=auto&path=%2F&pbk=3Z2x8P1sRsrKFBPqIImrtgPxPXaaDNKpYlq2rnJPwHY&pqv=WzK0Gb3dZG93MINPzfhoP_wTJrtsvviE5Uib0new4dOZOvpO7mgM3y4muaayqtt4HPCxOSMCj8mYTVzk6ZoJfreIxH-3cg_FljD09uQ8KFXO_Q1OGkvtE-CA7ttuIUa04c8Lq6svsmeBWrgu64cEmfBj7_ew6GRoZIYNb4XKyVnJiX9jRKWhZdZEJQ73u6EoftKLoGbzZNNMHaWP2DjJvcbgjxzSSvV1XDzEjSxJEQerLNtyJBmOVeda9Tz_XXhCitjBosZBbHnAESJ4qrwUHILZG2Kk1kLSBpyPGm5THQSky-jx8TvzBsQ3zCbdi_Wp_ykNZfars9gRJWzGCwnAhyU9bJFLSDBtHy6Eg5Jrqe3v8syzdbWUYuMvwu0ibpYJRXFFf-m13X19VBKVYLLMG31bLvLlXqafAkiOe-zWjYbPDVGvfmmhOy4gpqQmnq5gyT96qi5isD3MF0TEYW3BeQW4lhZQIUXLRZC_SGZYFZl1ZDDvEf5f1zVpdOnXjJsyHzlZMwimD40uT68euRRNvZn1XM5Cvg7CXHmOQaIt6NL19A24Nvs5JtQddeoViLS4huvMuuu2S9VBlBsUKDW2uYe8k8Ukb2OQAMNAKq92G1ZDQr3QytfgCjU7Zupc7YhjSMt0XO8vGsrwbd5xGhq0GBrmjqNQO0WapiZpU9upY_ja0Bwta1KVMBcNQ6wTF0zd8_Ok7e4vuabidcT0xKi0ocbbbJaGmLFa0pXwyeuJqYLj-mnugEXnrc86QNdqwkUBwlqYHFDHPhB43Glwb67tm4aeOLBHbx_kfuzrY_WSDx-lgCtpJBSeBypbsbjh5KaGiIzs1x0pITKhkl1BJdK7uWuWcH_W605tY8zgEggE9D2Kr2JH0DXTM8Tpz-IVZ2jXDuX1i4p0xf_DW_S649gP64XbgVUNOr0ahrl6-c5V5hWDUiQ_v5Wnocw8KOtja57ocHhiMg98Y_CE8RTrkXYPlbu4dtsjL8VgbX94kyBH1UGN8tpdTJfQEJKCrsD3poiZe_0o2UZ-eW1o4O8hzY5PnSsbPjP1ob-kudFMjhZeZMvq1PLTVhApght2zxeQAlMFCtMCYBMA_6HAiPiw8Xgu_KlDbCC77SdmVP8Xs6KcYFLCR-IirudgMYCbf4rog12ctFL_0p2o7NRbUErVeavUoasia7mSzvlDPBLyO00_w_qQflryK1NF47I_39c8M-7tNlXeS884WFvobg8ErUYN9b15oLjJHN1PzByJp-BIwNit3g__CD3lpb_v7qZqIO9fsPbvxtnzG6xRGIV_VGieCgVla5Ti0wY1byFyIfxdyQVCNcDZtHRlChsLDq05DTux6VAN7y5_e7b3MtL7sEpFRfyHieZJeqW1SXPkg58KlWpnUQtm_oKeKr_1OlIqQb4jmvF0MJV1kKHDUJ4btIj498TzzIwnpiqwnj2514xoK2TuFzm1B3h4zqtHTjZgXvfDpdH5x7m3HKoJnCwTsvlgr-LU_640SB8_fwq97sRqN5zcWY68QkamlSUFXL2nvAdF9zeyh-BSMvQAVrazBEbMkve8WhSIXowW-DCSp9mC-z28QpdUibKRd2LyZQ3fCtEQfeR8eOdL4wiOEAzVqSEIEabug00hwIAs-9Labbvy5c4NkKFWxEBg_UjLCxvfiAZXgTYUIaK1vfjGYrs-OxmNHPYk3eL5EmuFnF_irBv-BOfpcmo_O6wn0u9kr5AuWJaR4S6VM8g3ih1f3KdJAhah7LFeBqtBite-rfd5kPBPTo2vMn9hJzTr_XjgKie779SdYKoK9PA2C_hp9XADw3zY08Cg_qlbGw11oswyma-tF2ZJgPwbsIw2bp9D2mvD1hJvFOO0AApmE0g2_T58LUbNfnMfhEsTjD_0BIOu6HVSkG1OTj1idVYlsHucoGp5a91pAyz-9IgtnVijQI1h9UOei_G9njlmTpXO_lk9cM_t1P5xUEVrqIxcZb3ofFiKCKnTSpVZcPtkh_EhqXpQzK0SY2PYoZ7kROYUce8OLBmDr-2PA5yP_occmceIRcfUDU9k4Zit4hNwprpmsqUVeQMA0AwykOFLoxiZksm3wtpIlYqinrigSkU4u3fcujgDAau6Qib0Z09QqeEqiQigHArRPrmtEn0o2wCJw7CRXF7VneFN8Xt2wL1ktF5Dhbnd6FMYUt0VX3GQ6TQAu9x0d4PwV9CC96zLAi7Qy8FHav3d7eR4JmVet3JwaI861tRvuM0Zr-UX0rASQcoN-M7zePwqZDoph3e2G6UCqnoGBuY1ltq0gH4Vyo412yenlfbvYGkvx7R8Yf82OizDKBQRoQrsfKN0PFdFsVuQdVt9oTKoLUIcAaSaYfmx1DAZvyu4cLe491MEiYgY4nvJajfpSQL7r7Le88z8JMF2Ingz4nPE6oe-iFxY7dEHwZ4tqJWZDetUnpYIGJr1nanNOlyMjKjJgxtBLuyKqnpz-YLdmzmtyTS271JxFVBKsVM_YySySJQc4TTd_R4A3t9GU7jKUvkI38-87BMxUAQzA09hSGL-pJpCxQaDHMOXrH6zDA71V4WQCZs2_kcxloJEXu3ujSXxhEXEHOVvKoahRjRRnO6D3KU&security=reality&sid=5338&sni=google.com&spx=%2FE0k2I8azE8iDrwY&type=xhttp&x_padding_bytes=100-1000#-android2";
+//        dd(parse_url($str));
+        function parse(string $rawLink): string
+        {
+            $parts = parse_url($rawLink);
 
+            $uuid = $parts['user'] ?? null;   // то, что между // и @
+            $tag  = isset($parts['fragment']) ? rawurldecode($parts['fragment']) : null;
 
+            $template = $rawLink;
+
+            // Заменяем именно найденную строку, а не по regex —
+            // parse_url уже сказал нам точное значение, так что str_replace безопасен
+            if ($uuid !== null) {
+                $template = str_replace('//' . $uuid . '@', '//{uuid}@', $template);
+            }
+
+            if (isset($parts['fragment'])) {
+                $template = str_replace('#' . $parts['fragment'], '#{tag}', $template);
+            }
+
+            return $template;
+        }
+        dd(parse($str));
+        function templatizeLink(string $rawLink): string
+        {
+//            return preg_replace('/\/\/[^@]+@/', '//{uuid}@', $rawLink);
+            return preg_replace('/#.+$/', '#{tag}', $rawLink);
+        }
+        dd(templatizeLink($str));
     });
     Route::get('/testmail',function (){
         $to_name = 'Иван';
@@ -100,7 +127,7 @@ Route::prefix('/admin')->middleware('admin')->name('admin.')->group(function (){
     Route::delete('users/devices/{device}/destroy', [AdminDevisController::class, 'destroy'])
         ->name('devises.destroy');
 
-
+    Route::get('devices', [AdminDevisController::class, 'allDevise'])->name('all.devises');
     Route::resource('/tarrifs',\App\Http\Controllers\Admin\TarrifController::class);
 });
 

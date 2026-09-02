@@ -4,6 +4,7 @@ namespace App\Services\Xui\Xui3;
 
 use App\Models\Devise;
 use App\Models\Server;
+use App\Models\ServerInbound;
 use App\Services\Xui\DTO\ServerStatusDTO;
 use App\Services\Xui\HttpClient;
 use App\Services\Xui\Services\BaseService;
@@ -11,6 +12,7 @@ use App\Services\Xui\XuiClient;
 use App\Services\Xui\XuiBase;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
+use Psy\Util\Str;
 
 class Xuiv3Service extends XuiBase
 {
@@ -18,6 +20,8 @@ class Xuiv3Service extends XuiBase
     {
         return $devise->ui_name;
     }
+
+
 
     public function createClient(Server $server, Devise $devise)
     {
@@ -31,10 +35,11 @@ class Xuiv3Service extends XuiBase
                 "limitIp" => 0,
                 "enable" => true,
                 "subId"=>$devise->ui_id,
+                "auth"=>$devise->ui_id,
                 "id"=>$devise->ui_id,
             ],
-            "inboundIds" => $server->inbounds->pluck('inbound')->map(fn($id) => (int)$id)
-                ->values()->toArray()
+            "inboundIds" => collect($this->getInbounds($server)->json('obj'))->pluck('id')->toArray()
+            //$server->inbounds->pluck('inbound')->map(fn($id) => (int)$id)->values()->toArray()
         ];
 
         $this->http->request('post', $server, 'panel/api/clients/add', $data);
@@ -74,35 +79,77 @@ class Xuiv3Service extends XuiBase
         }
         return $result;
     }
+
     public function subLink(Server $server,Devise $devise)
     {
-        $array = [];
-
-        foreach($server->inbounds as $connect){
-            $url='';
-            $url.=$connect->protocol
-                .'://'.$devise->ui_id
-                .'@'.$connect->server->ip
-                .':'.$connect->port
-                .'?type='.$connect->type
-                .'&encryption='.$connect->encryption;
-            if ($connect->type==='xhttp'){
-                $url.='&path='.$connect->path;
-                $url.='&host='.$connect->host;
-                $url.='&mode='.$connect->mode;
+        $links=[];
+        foreach ($server->load('inbounds')->inbounds as $inbound) {
+            if ($inbound->sub_template){
+                $links[] = str_replace('{uiid}', $devise->ui_id, $inbound->sub_template);
             }
-            $url.='&security='.$connect->security;
-             $url.='&pbk='.$connect->pbk;
-             $url.='&fp='.$connect->fp;
-             $url.='&sni='.$connect->sni;
-             $url.='&sid='.$connect->sid;
-             $url.='&spx='.$connect->spx;
-             $url.='&pqv='.$connect->pqv;
-             $url.='#'.$connect->server->name;
-             $url.=''.$connect->server->flag;
-            $array[]=$url;
         }
-        return $array;
+
+        return $links;
+    }
+    public function subTemplate(Server $server)
+    {
+
+        $devise = new Devise([
+            'name'=>'settings',
+            'user_id'=>0,
+            'ui_id'=>str()->uuid()->toString(),
+            'ui_name'=>str()->slug('settings').''. substr(\Illuminate\Support\Str::uuid(),0,10),
+        ]);
+
+        $this->createClient($server,$devise);
+
+        $response = $this->http->request('get',$server,"panel/api/clients/subLinks/{$devise->ui_id}");
+
+        if ($response === null) {
+            return null;
+        }
+        foreach ($response->json('obj') as $item){
+            $pos = strpos($item, '#');
+            if ($pos !== false) {
+                $item = substr($item, 0, $pos);
+            }
+
+            $template = str_replace($devise->ui_id,'{uiid}',$item);
+            $url_arry=(parse_url($template));
+//            parse_str($url_arry['query'] ?? '', $query);
+//            dd($template,$query);
+            $result[] = $template.'#'.$server->flag.$server->name;
+        }
+        $this->deleteClient($server,$devise);
+//        $devise->delete();
+        return $result;
+//        $array = [];
+//
+//        foreach($server->inbounds as $connect){
+//            $url='';
+//            $url.=$connect->protocol
+//                .'://'.$devise->ui_id
+//                .'@'.$connect->server->ip
+//                .':'.$connect->port
+//                .'?type='.$connect->type
+//                .'&encryption='.$connect->encryption;
+//            if ($connect->type==='xhttp'){
+//                $url.='&path='.$connect->path;
+//                $url.='&host='.$connect->host;
+//                $url.='&mode='.$connect->mode;
+//            }
+//            $url.='&security='.$connect->security;
+//             $url.='&pbk='.$connect->pbk;
+//             $url.='&fp='.$connect->fp;
+//             $url.='&sni='.$connect->sni;
+//             $url.='&sid='.$connect->sid;
+//             $url.='&spx='.$connect->spx;
+//             $url.='&pqv='.$connect->pqv;
+//             $url.='#'.$connect->server->name;
+//             $url.=''.$connect->server->flag;
+//            $array[]=$url;
+//        }
+//        return $array;
     }
     public function online(Server $server){
         $response= $this->http->request(
@@ -237,6 +284,38 @@ class Xuiv3Service extends XuiBase
 //            ]
 //        ];
         $response = $this->http->request('post', $server, 'panel/api/inbounds/add', $payload);
+        dd($response->json());
+    }
+
+    public function getSubLinksFromImbaund($serverInbound)
+    {
+        dd($serverInbound);
+    }
+    private function parseSubTeplate(string $rawLink): string
+    {
+        $parts = parse_url($rawLink);
+
+        $uuid = $parts['user'] ?? null;   // то, что между // и @
+        $tag  = isset($parts['fragment']) ? rawurldecode($parts['fragment']) : null;
+
+        $template = $rawLink;
+
+        // Заменяем именно найденную строку, а не по regex —
+        // parse_url уже сказал нам точное значение, так что str_replace безопасен
+        if ($uuid !== null) {
+            $template = str_replace('//' . $uuid . '@', '//{uuid}@', $template);
+        }
+
+        if (isset($parts['fragment'])) {
+            $template = str_replace('#' . $parts['fragment'], '#{tag}', $template);
+        }
+
+        return $template;
+    }
+
+    public function allLink($server)
+    {
+        $response = $this->http->request('get', $server, 'panel/api/inbounds/allLinks');
         dd($response->json());
     }
 }
