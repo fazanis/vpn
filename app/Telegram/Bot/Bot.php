@@ -9,7 +9,7 @@ class Bot
 {
     public static function sendMessage($chat_id,$message)
     {
-        Http::post('https://api.telegram.org/bot'.env('TELEGRAM_BOT_TOKEN').'/sendMessage',[
+        return Http::post('https://api.telegram.org/bot'.env('TELEGRAM_BOT_TOKEN').'/sendMessage',[
             'chat_id'=>$chat_id,
             'text'=>$message,
             'parse_mode'=>'HTML',
