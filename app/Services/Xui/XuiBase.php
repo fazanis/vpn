@@ -19,14 +19,6 @@ abstract class XuiBase
             'panel/api/inbounds/list'
         );
     }
-    public function ping(Server $server){
-        $response= $this->http->request(
-            'GET',
-            $server,
-            'panel/api/server/status'
-        );
-        return $response ? $response->status() : null;
-    }
     public function status(Server $server){
         $response= $this->http->request(
             'GET',
