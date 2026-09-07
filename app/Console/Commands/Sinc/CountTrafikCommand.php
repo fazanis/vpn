@@ -39,8 +39,8 @@ class CountTrafikCommand extends Command
         }
 //        dd($result);
         foreach($result as $key=>$value){
-            $r=Devise::query()->where('ui_id',$key)->update(['trafik' => $value]);
-            dump($r.' '.$value);
+            $devise=Devise::query()->where('ui_id',$key)->update(['trafik' => $value]);
+            dump($devise.' '.$value);
         }
     }
 }
