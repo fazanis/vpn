@@ -38,26 +38,8 @@ class CountTrafikCommand extends Command
 //
         }
 //        dd($result);
-        foreach ($result as $key => $value) {
-            $devise = Devise::query()
-                ->where('ui_id', $key)
-                ->first();
-
-            dump([
-                'id' => $devise?->id,
-                'ui_id' => $key,
-                'before' => $devise?->trafik,
-                'value' => $value,
-                'value_type' => gettype($value),
-            ]);
-
-            $devise?->update([
-                'trafik' => (string) $value,
-            ]);
-
-            dump([
-                'after' => $devise?->fresh()->trafik,
-            ]);
+        foreach($result as $key=>$value){
+            $devise=Devise::query()->where('ui_id',$key)->update(['trafik' => (string)$value]);
         }
     }
 }
