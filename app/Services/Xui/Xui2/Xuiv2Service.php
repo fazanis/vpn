@@ -176,11 +176,9 @@ class Xuiv2Service extends XuiBase
 
         $result = [];
         foreach ($obj as $inbound) {
-
             $inbound=$inbound['clientStats'];
-
             foreach($inbound as $client){
-                $email = $client->id ?? '';
+                $email = $client['uuid'] ?? '';
                 $total= $client['allTime']; //(($client->up+$client->down) ?? 0);
                 if (!isset($result[$email])) {
                     $result[$email] = 0;
