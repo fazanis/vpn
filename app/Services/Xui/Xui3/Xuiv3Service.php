@@ -68,6 +68,7 @@ class Xuiv3Service extends XuiBase
 
         $obj = $response->json('obj') ?? [];
         $result = [];
+
         foreach ($obj as $inbound) {
             $email = $inbound['uuid'] ?? '';
             $total = ($inbound['traffic']['up'] ?? 0) + ($inbound['traffic']['down'] ?? 0);
@@ -75,7 +76,7 @@ class Xuiv3Service extends XuiBase
                 $result[$email] = 0;
             }
 
-            $result[$email]+=$total;
+            $result[$email]=$total;
         }
         return $result;
     }
@@ -177,114 +178,117 @@ class Xuiv3Service extends XuiBase
     }
     public function createInbound(Server $server)
     {
-        $response = $this->http->request('get', $server, 'panel/api/server/getNewX25519Cert');
-        $getNewmldsa65 = $this->http->request('get', $server, 'panel/api/server/getNewmldsa65');
-//        dd($getNewmldsa65->json('obj'));
-        $payload = [
-            'remark' => 'test',
-            'enable' => true,
-            'listen' => '',
-            'port' => 2222,
-            'protocol' => 'vless',
-            'expiryTime' => 0,
-            'total' => 0,
+        $setting='{
+              "listen": "",
+              "port": 46512,
+              "protocol": "vless",
+              "tag": "in-46512-tcp",
+              "settings": {
+                "clients": [],
+                "decryption": "none",
+                "encryption": "none"
+              },
+              "sniffing": {
+                "enabled": false
+              },
+              "streamSettings": {
+                "network": "xhttp",
+                "xhttpSettings": {
+                  "path": "/",
+                  "host": "",
+                  "mode": "auto",
+                  "xPaddingBytes": "100-1000",
+                  "xPaddingObfsMode": false,
+                  "xPaddingKey": "",
+                  "xPaddingHeader": "",
+                  "xPaddingPlacement": "",
+                  "xPaddingMethod": "",
+                  "sessionIDPlacement": "",
+                  "sessionIDKey": "",
+                  "sessionIDTable": "",
+                  "sessionIDLength": "",
+                  "seqPlacement": "",
+                  "seqKey": "",
+                  "uplinkDataPlacement": "",
+                  "uplinkDataKey": "",
+                  "scMaxEachPostBytes": "",
+                  "noSSEHeader": false,
+                  "scMaxBufferedPosts": 30,
+                  "scStreamUpServerSecs": "20-80",
+                  "serverMaxHeaderBytes": 0,
+                  "uplinkHTTPMethod": "",
+                  "headers": {},
+                  "scMinPostsIntervalMs": "",
+                  "uplinkChunkSize": 0,
+                  "noGRPCHeader": false,
+                  "enableXmux": false
+                },
+                "security": "reality",
+                "realitySettings": {
+                  "show": false,
+                  "xver": 0,
+                  "target": "www.amd.com:443",
+                  "serverNames": [
+                    "amd.com",
+                    "www.radeon.com",
+                    "www.gpuopen.com",
+                    "www.amd.com",
+                    "verification.amd.com",
+                    "support.amd.com",
+                    "support-sit.amd.com",
+                    "shop.amd.com",
+                    "shop-us-en.amd.com",
+                    "shop-eu-fr.amd.com",
+                    "shop-eu-en.amd.com",
+                    "shop-eu-de.amd.com",
+                    "shop-ca-en.amd.com",
+                    "search.amd.com",
+                    "radeon.com",
+                    "products.amd.com",
+                    "pro.radeon.com",
+                    "mars.amd.com",
+                    "instinct.radeon.com",
+                    "gpuopen.com",
+                    "gaming.radeon.com",
+                    "explore.amd.com",
+                    "drivers.amd.com",
+                    "download.amd.com",
+                    "creators.radeon.com",
+                    "connect.amd.com",
+                    "connect-sit.amd.com",
+                    "account.amd.com"
+                  ],
+                  "privateKey": "yJzabCjHCoGIYxd963ZZEq-tGAtDSRzCzYoz0wAqt2Q",
+                  "minClientVer": "",
+                  "maxClientVer": "",
+                  "maxTimediff": 0,
+                  "shortIds": [
+                    "94c8",
+                    "e9f1568aed",
+                    "ac",
+                    "b0acd2faa20c",
+                    "fea05e",
+                    "3d495590",
+                    "e3bdb8ba6ef847fd",
+                    "4d92c27fadb99f"
+                  ],
+                  "mldsa65Seed": "k6jSCGbiswSMlBk1cIUFT3CAkQuH9KPL2wT3b49moG0",
+                  "settings": {
+                    "publicKey": "7X8__eViVqeZQVNg0aq4XFR8Xtd5TnUNjV2Ycl-T1gA",
+                    "fingerprint": "firefox",
+                    "serverName": "",
+                    "spiderX": "/OqEVVKqm86z8wxO",
+                    "mldsa65Verify": "bI4vtWIBQZbaiauIvuzCY-ju1h3RpgfF5nvsr8A30Ile3yXob95LawG6-uIW3E2w_ioMRdpeJUc9HFF0lQ0MN5sJVT40joWejL1xZ9RZqJKn_R7fRShab_ifZTK6hN0wnDiINYYyYXfVKzdXOfUuXmMALufkj055DlfUV2Al85CJi87kLKDvcaELZYFO8oUOFPD77nl2okSkweb566_HsgHKC6OeDDU09OckZduc6CGmmmbCG4MnzScjxYPOzgyUOieskhNJquRFGq3jMWaza1WhxAUX8nLvw84D6U-dy_Cayvft1UrBQNVRsN6JYRzHQGMPOPDMfWp9dKjp_GzOtRNcXqUi7YIcpIDwLWwE-BfMcKx_cpZv2_snkH9Wk9rMCyQvs44W2V9GZApxpRH479_f9HyiJe-RSw5RVzXJv6nBtRpoMJg-6iHhrrh-YPSAuU_tXsXjyfSGLuHEZhTSGc0bMxdwQeZIktM789a_gb42Sd-yvmiEmJI11uE_fZ5g3q_YCn3H4qvIv09xc513mvS0qQdl07-1eTgsAzO-rrdu79pVuzTs5_DxGJ70AC1F-0q8SjIyVVU8cxswZtcvEhrzi-zV6ru055E2wsANOhenWw8QWp54mmc9seG0BgDaClLkRkCBCv3Y1Ey8cpxwYyEnODGU0Xipqp0QqHo0WDJ-p2rgdx-7ns6oKJ6V1lEGAW-WtfoE32IrMZ8-a0g3MCOK3PkGnKFYGOJbxrWE0UHS0kK2Gjhesb_CMDdOrfe8_6EmTpFkjwcfMXj9YEFs2Ij_dDDEbg36eqrGQYuB-J2h1CfKhQzFNCcuIjTJFD7PaTYQEHUuGbsUADc5SzA_JxTavT-IKY8vxwlSwpNYaKE7n8JJR2o8EKoMVS43I8YRZIu_inZoslRDOQzHnOqXNAuDVQegaNVOWxtYFKBedwhUopIWfmeWnW7Yfclb2Kly2gqCew9X6rK69TkpYSUcQZvapnkPzYZ9f16XcqpC6ntvM4y2yPYdTG57yk7irqbOe3qoM7MafW0UdSv1W2ZrcSEqXeE7rQgFe3DLKSCmvGDX0MlIQbAG1aoc5bJcTjxQeg_eH6ND7sD7GKqQFzki_W_m810qBV67-B9UJkXPjg3yDuS_-gPQsnahRWs_6scQmBRrhj7XnVHptCoCelGCOd4YNf3NOXJNa6PwUoIUkoqPa_TyqvCMh_vy6Ys3ThYWMLAtWpfrs8nfwJtWJfdFaqTPsyPri4TzfhL4VhlCrR3uHqHGt7ph6uaFnhGstke_Hc7yHbr9TwZnX_Tm421D1xKpF9W2ke1vbKfOFNezJB4-qaf5eiS_Xqe6yN-YrMb9MbENk50NlUhba4n2ZgVSyZI7lcmsNrclr6HDgiRVQVIqJzQeXUGHMvmKw3DL9cybtfnH3bTA3UzIneqUZeVhFboCYmG-6r-TkNggRAIpuH0vI9hHd4QG5EPzd4qAaxO1Zvkd0qx8a9A1PRAnBXN5viEHFAk-aBTf8G7KJmwyu0OVKfPaNkkGPxh7ofx8DNYbHIUP7Yyuhl7NyJdW0i8qc3AlMgZ0-tl8uwV9r7O8VZDI5tfT5n-QZvIkuHw6MlfNIeq_2RoIZDPVgoG7itRvOutHcQlE44_C5TAzjnee5iFyAA7fxA_CZddmLO0e0dtQ0-TFYjbt7vsEs_gl3g01g0a61FokqDxy5c2Pl56IvsB32B-tBxmiXzRYc6B3LH1OS_WZcpSL6Kr8mS4u5wpXPQDmL14a9YCdNsnrciSfh6upB06RUj_NeRNGf8j8WGGHsm72E4Aq6zYHAK1zOtVNx9ScCsEdxwoeQZ-antf_UEY6CgL1zBb10T-WDDUu0GXJLK1LRWNyAPVGdTMzuic9UyAN4SP7avJ9eYl4KmV-ew2-FCI4knSisNuYkMmfzZr-0nSFKHifbifCayAHAXSNs2V3JOLrz7GpEfj2SWUCZ_o_Qs6Old4USM83prtdVNvlMQAyD7uSi8Rs-oB03_NsodF8Nr9oO9KCaSZg803mNy8UwLVXBvepdCYP8tRBpx7coJKqm8xYc0fv8WNB9D99JOKTs9pCg33V_E5UbZKdw91kUoqVMPFGXfbGS8uPI9QHS0o2pvmtM6Pm5X5fOjU8YOzT8gXsP6VdKR0PPpmnkLOQIi3wcM_eRiSYcypJNbTqnP4rSK2_SO_re2tJ1bHYY5qBuYKaL0pTP389a2GJHQ1ZSDHIGC_qTdi4c1tsz4F_5jMjh71pa2r-MGTR3IjZTFjNH6_6dUQwmEgntCt3xUkF_xd7UK3ybAWqSRz-IAJ5WKXZZOLcpa1c_-fYhF_S5EDq-hcODHj_tDce1wHJzEO0tf1fHRdXRpgWZTD_-U1rXatGpNe8ghyIJ9f2hKHNYgzW3Aj_cfqEkBeUBooaFiwzeL_clXISY2IdK5jPEzVAI1OwufpFezWy-NaE_iX7g1mMIphMdKBygrRcJyej2R_ddfZ_RAjzui06YpO1-6WzdhxkJQ5L5_Hhpxa2bPa8aCYSB_zDtN5ckixu87dQtcqDvAYqyz2A3w13uRNeChO7BF8a0VqzQ444jmhIL2UZtFrfA6wbyxjzGfWUMMK3qhM"
+                  }
+                }
+              }
+            }';
 
-            'settings' => json_encode([
-                'clients' => [],
-                'decryption' => 'none',
-                'fallbacks' => [],
-            ], JSON_UNESCAPED_SLASHES),
-
-            'streamSettings' => json_encode([
-                'network' => 'tcp',
-                'security' => 'reality',
-
-                'tcpSettings' => [
-                    'acceptProxyProtocol' => false,
-                    'header' => [
-                        'type' => 'none',
-                    ],
-                ],
-
-                'realitySettings' => [
-                    'show' => false,
-                    'xver' => 0,
-                    'target'=>"google.com:443",
-                    'dest' => "google.com:443",                // google.com:443
-                    'serverNames' => [
-                        "google.com",                // google.com
-                    ],
-                    'privateKey' => $response->json('obj.privateKey'),
-                    'minClient' => '',
-                    'maxClient' => '',
-                    'maxTimediff' => 0,
-                    'shortIds' => [
-                        'asdadasdasd',
-                    ],
-                    "mldsa65Seed"=> $getNewmldsa65->json('obj.seed'),
-                    'settings' => [
-                        'publicKey' =>  $response->json('obj.publicKey'),
-                        'fingerprint' => "firefox", // chrome
-                        'serverName' => "google.com",
-                        'spiderX' => '/',
-                        'mldsa65Verify'=>$getNewmldsa65->json('obj.verify')
-                    ],
-                ],
-            ], JSON_UNESCAPED_SLASHES),
-
-            'sniffing' => json_encode([
-                'enabled' => true,
-                'destOverride' => [
-                    'http',
-                    'tls',
-                    'quic',
-                    'fakedns',
-                ],
-                'metadataOnly' => false,
-                'routeOnly' => false,
-            ], JSON_UNESCAPED_SLASHES),
-
-            'allocate' => json_encode([
-                'strategy' => 'always',
-                'refresh' => 5,
-                'concurrency' => 3,
-            ], JSON_UNESCAPED_SLASHES),
-        ];
-
-//        $array = [
-//            "enable" => true,
-//            "remark" => "VLESS-8443",
-//            "listen" => "",
-//            "port" => 8443,
-//            "protocol" => "vless",
-//            "expiryTime" => 0,
-//            "total" => 0,
-//            "settings"=>[
-//                "publicKey"=> $response->json('obj.publicKey'),
-//                "clients"=>[],
-//                "decryption"=>"none",
-//                "fallbacks"=> []
-//            ],
-//            "streamSettings"=>[
-//                "network"=> "tcp",
-//                "security"=>"reality",
-//                "realitySettings"=> [
-//                    "privateKey"=>$response->json('obj.privateKey'),
-//                    "show"=> false,
-//                    "dest"=> "..."
-//                ],
-//            ],
-//
-//            "sniffing"=>[
-//                "enabled"=> true,
-//                "destOverride"=> [
-//                    "http",
-//                    "tls"
-//                ]
-//            ]
-//        ];
-        $response = $this->http->request('post', $server, 'panel/api/inbounds/add', $payload);
-        dd($response->json());
+//        $response = $this->http->request('get',$server,'panel/api/server/getNewX25519Cert');
+        $response = $this->http->request('get',$server,'panel/api/server/getNewmldsa65');
+        dd($response->json('obj'));
+        $response = $this->http->request('post',$server,'panel/api/inbounds/add',json_decode($setting));
+        dd($response,$response->json());
     }
 
     public function getSubLinksFromImbaund($serverInbound)

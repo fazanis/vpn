@@ -20,7 +20,7 @@ class CountTrafikCommand extends Command
 
     public function handle()
     {
-        $servers = Server::query()->get();
+        $servers = Server::query()->activate()->get();
 
         $result=[];
         foreach ($servers as $server) {
@@ -32,6 +32,7 @@ class CountTrafikCommand extends Command
                 }
                 $result[$id]+=$value;
             }
+
         }
         foreach($result as $key=>$value){
             Devise::query()->where('ui_id',$key)->update(['trafik' => $value]);

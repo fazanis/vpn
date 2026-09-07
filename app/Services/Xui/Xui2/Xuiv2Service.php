@@ -186,6 +186,7 @@ class Xuiv2Service extends XuiBase
                 $result[$email]+=$total;
             };
         }
+
         return $result;
     }
 }
