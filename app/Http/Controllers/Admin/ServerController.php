@@ -108,7 +108,7 @@ class ServerController extends Controller
         {
             $server->inbounds()->create(['sub_template'=>$item]);
         }
-        DeviseSincJob::dispatch($server)->onQueue('low');
+//        DeviseSincJob::dispatch($server)->onQueue('low');
         }catch (ConnectionException $e) {
 
         }
