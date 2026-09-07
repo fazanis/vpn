@@ -173,12 +173,15 @@ class Xuiv2Service extends XuiBase
         }
 
         $obj = $response->json('obj') ?? [];
+
         $result = [];
         foreach ($obj as $inbound) {
-            $inbound=json_decode($inbound['settings'])->clients;
+
+            $inbound=$inbound['clientStats'];
+
             foreach($inbound as $client){
                 $email = $client->id ?? '';
-                $total= $client->totalGB; //(($client->up+$client->down) ?? 0);
+                $total= $client['allTime']; //(($client->up+$client->down) ?? 0);
                 if (!isset($result[$email])) {
                     $result[$email] = 0;
                 }
