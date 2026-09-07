@@ -26,7 +26,7 @@ class CountTrafikCommand extends Command
         foreach ($servers as $server) {
             $xui = XuiFactory::make($server);
             $response = $xui->getTraffik($server);
-            dump($response);
+
             foreach ($response as $id=>$value) {
                 $result[$id]= ($result[$id] ?? 0) + $value;
 
@@ -37,9 +37,9 @@ class CountTrafikCommand extends Command
             }
 //
         }
-        dd($result);
-//        foreach($result as $key=>$value){
-//            Devise::query()->where('ui_id',$key)->update(['trafik' => $value]);
-//        }
+//        dd($result);
+        foreach($result as $key=>$value){
+            Devise::query()->where('ui_id',$key)->update(['trafik' => $value]);
+        }
     }
 }
