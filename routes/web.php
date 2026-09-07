@@ -32,6 +32,9 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+Route::get('/paumetn/freekassa/success',function(Request $request){
+    dd($request->all());
+});
 Route::get('/test', function () {
 
 //      $user = User::query()->where('email','fazanis@mail.ru')->first();

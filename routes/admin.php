@@ -16,6 +16,7 @@ use App\Models\Server;
 use App\Models\ServerInbound;
 use App\Models\Subscription;
 use App\Models\User;
+use App\Services\Paument\FreeKassa;
 use App\Services\Xui\XuiFactory;
 use App\Services\XuiServices;
 use Illuminate\Auth\Events\Registered;
@@ -30,9 +31,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('/admin')->middleware('admin')->name('admin.')->group(function (){
     Route::get('/test', function () {
-        $server = Server::find(8);
-       $xui = XuiFactory::make($server);
-        $xui->createInbound($server);
+      $freekassa = new FreeKassa();
+      dd($freekassa->paumentLink('100',12312312312));
     });
     Route::get('/testmail',function (){
         $to_name = 'Иван';

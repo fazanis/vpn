@@ -185,7 +185,7 @@
                             <div class="flag">{{$server->server->flag}}</div>
                             <div style="flex:1">
                                 <div class="srv-name">{{$server->server->name}}</div>
-                                <div class="srv-city">{{$server->protocol}} / {{$server->type}} / {{$server->security}} </div>
+{{--                                <div class="srv-city">{{$server->protocol}} / {{$server->type}} / {{$server->security}} </div>--}}
                             </div>
                             <div class="signal-bars">
                                 <div class="bar b1 lit"></div>
