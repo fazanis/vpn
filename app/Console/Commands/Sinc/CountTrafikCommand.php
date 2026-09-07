@@ -27,17 +27,17 @@ class CountTrafikCommand extends Command
             $xui = XuiFactory::make($server);
             $response = $xui->getTraffik($server);
             dump($response);
-//            foreach ($response as $id=>$value) {
-//                $result[$id]= ($result[$id] ?? 0) + $value;
-//                dump($result[$id]);
-////                if (!isset($result[$id])) {
-////                    $result[$id] = 0;
-////                }
-////                $result[$id]+=$value;
-//            }
+            foreach ($response as $id=>$value) {
+                $result[$id]= ($result[$id] ?? 0) + $value;
+
+//                if (!isset($result[$id])) {
+//                    $result[$id] = 0;
+//                }
+//                $result[$id]+=$value;
+            }
 //
         }
-//        dump($result);
+        dd($result);
 //        foreach($result as $key=>$value){
 //            Devise::query()->where('ui_id',$key)->update(['trafik' => $value]);
 //        }
