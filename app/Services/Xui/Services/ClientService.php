@@ -72,6 +72,8 @@ class ClientService
 
     public function resetAllTraffics(Collection $servers)
     {
+        $servers=Server::query()->find(8);
+        $servers= Collection::wrap($servers);
         foreach ($servers as $server) {
             $this->factory->make($server)->resetAllTraffics($server);
         }
