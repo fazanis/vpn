@@ -10,23 +10,10 @@ use Illuminate\Support\Facades\Mail;
 
 class TakeServerStatus extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
+
     protected $signature = 'server:status';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Command description';
-
-    /**
-     * Execute the console command.
-     */
     public function handle(XuiFactory $factory)
     {
         $servers = Server::query()->get();
@@ -35,13 +22,13 @@ class TakeServerStatus extends Command
             if(!$status->error && $server->status==='inactive'){
                 $message = $server->name.' снова доступен';
                 $this->info($message);
-                $server->update(['status' => 'active']);
+//                $server->update(['status' => 'active']);
                 $this->sendNotification($message);
             }
             if($status->error && $server->status==='active'){
                 $message=$server->name.' не доступен';
                 $this->warn($message);
-                $server->update(['status' => 'inactive']);
+//                $server->update(['status' => 'inactive']);
                 $this->sendNotification($message);
             }
         }

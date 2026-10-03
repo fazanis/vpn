@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6c158df502ceab631daf1833df5bb1c7",
+    "content-hash": "d3e18801f1b7647dd6b3f1c9d2540380",
     "packages": [
         {
             "name": "almasaeed2010/adminlte",
@@ -7105,6 +7105,118 @@
                 }
             ],
             "time": "2024-11-21T01:49:47+00:00"
+        },
+        {
+            "name": "wapmorgan/morphos",
+            "version": "3.2.30",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wapmorgan/Morphos.git",
+                "reference": "b7680f96101668ec910627239048e34aae64d6f8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wapmorgan/Morphos/zipball/b7680f96101668ec910627239048e34aae64d6f8",
+                "reference": "b7680f96101668ec910627239048e34aae64d6f8",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "php": ">=7.3",
+                "phpunit/phpunit": "~9.5.20"
+            },
+            "suggest": {
+                "ext-readline": "For using interactive version of script"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/English/functions.php",
+                    "src/Russian/functions.php"
+                ],
+                "psr-4": {
+                    "morphos\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sergey Vanyushin",
+                    "email": "wapmorgan@gmail.com",
+                    "role": "developer"
+                }
+            ],
+            "description": "A morphological solution for Russian and English language written completely in PHP. Provides classes to inflect personal names, geographical names, decline and pluralize nouns, generate cardinal and ordinal numerals, spell out money amounts and time.",
+            "homepage": "http://morphos.io",
+            "keywords": [
+                "Numerals",
+                "adjectives",
+                "cardinal",
+                "declension",
+                "english",
+                "geographical names",
+                "human-friendly",
+                "inflection",
+                "language",
+                "money",
+                "morphology",
+                "nouns",
+                "ordinal",
+                "personal names",
+                "pluralization",
+                "russian",
+                "spelling",
+                "time"
+            ],
+            "support": {
+                "issues": "https://github.com/wapmorgan/Morphos/issues",
+                "source": "https://github.com/wapmorgan/Morphos/tree/3.2.30"
+            },
+            "time": "2025-06-27T23:05:16+00:00"
+        },
+        {
+            "name": "wapmorgan/morphos-blade",
+            "version": "1.6.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/wapmorgan/Morphos-Blade.git",
+                "reference": "181e9abae373eb873932bc9624916304ae14b820"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/wapmorgan/Morphos-Blade/zipball/181e9abae373eb873932bc9624916304ae14b820",
+                "reference": "181e9abae373eb873932bc9624916304ae14b820",
+                "shasum": ""
+            },
+            "require": {
+                "wapmorgan/morphos": "~3.2.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "morphos\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Adds @plural, @name, @numeral, @ordinal and @money tags to Blade for Russian pluralization and declenation.",
+            "keywords": [
+                "blade",
+                "morphology"
+            ],
+            "support": {
+                "issues": "https://github.com/wapmorgan/Morphos-Blade/issues",
+                "source": "https://github.com/wapmorgan/Morphos-Blade/tree/master"
+            },
+            "time": "2018-10-30T15:30:08+00:00"
         }
     ],
     "packages-dev": [

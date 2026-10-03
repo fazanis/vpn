@@ -45,6 +45,7 @@ it('devise page',function(){
     $devices = Devise::query()->first();
 
     $response = $this->get(route('subscription.devises',$devices->ui_id));
+
     $response->assertStatus(200);
 });
 

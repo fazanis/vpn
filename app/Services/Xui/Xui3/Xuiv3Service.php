@@ -37,10 +37,12 @@ class Xuiv3Service extends XuiBase
                 "subId"=>$devise->ui_id,
                 "auth"=>$devise->ui_id,
                 "id"=>$devise->ui_id,
-            ],
-            "inboundIds" => collect($this->getInbounds($server)->json('obj'))->pluck('id')->toArray()
-            //$server->inbounds->pluck('inbound')->map(fn($id) => (int)$id)->values()->toArray()
-        ];
+            ]];
+        $obj=$this->getInbounds($server);
+        if (!$obj){
+            return;
+        }
+        $data["inboundIds"] = collect($obj->json('obj'))->pluck('id')->toArray();
 
         $this->http->request('post', $server, 'panel/api/clients/add', $data);
 
@@ -86,7 +88,7 @@ class Xuiv3Service extends XuiBase
         $links=[];
         foreach ($server->load('inbounds')->inbounds as $inbound) {
             if ($inbound->sub_template){
-                $links[] = str_replace('{uiid}', $devise->ui_id, $inbound->sub_template);
+                $links[] = str_replace('{uiid}', $devise->ui_id, $inbound->sub_template.'#'.$server->flag.$server->name);
             }
         }
 
@@ -119,7 +121,7 @@ class Xuiv3Service extends XuiBase
             $url_arry=(parse_url($template));
 //            parse_str($url_arry['query'] ?? '', $query);
 //            dd($template,$query);
-            $result[] = $template.'#'.$server->flag.$server->name;
+            $result[] = $template;
         }
         $this->deleteClient($server,$devise);
 //        $devise->delete();

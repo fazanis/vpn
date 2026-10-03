@@ -21,8 +21,11 @@ class Xuiv2Service extends XuiBase
     }
     public function createClient(Server $server,Devise $devise)
     {
-
-        foreach ($this->getInbounds($server)->json('obj') as $inbound) {
+        $obj = $this->getInbounds($server);
+        if (!$obj) {
+            return;
+        }
+        foreach ($obj->json('obj') as $inbound) {
 
             $clients = [];
                 $clients[] = [
@@ -57,8 +60,13 @@ class Xuiv2Service extends XuiBase
 
     public function deleteClient(Server $server,Devise $devise)
     {
-        foreach ($server->inbounds as $inbound) {
-            $this->http->request('post', $server, "panel/api/inbounds/{$inbound->inbound}/delClientByEmail/{$this->deviseEmail($inbound, $devise)}");
+        $obj=$this->getInbounds($server);
+        if (!$obj) {
+            return;
+        }
+
+        foreach ($obj->json('obj') as $inbound) {
+            $this->http->request('post', $server, "panel/api/inbounds/{$inbound['id']}/delClientByEmail/{$this->deviseEmail($inbound['id'], $devise)}");
         }
 
     }
@@ -82,7 +90,7 @@ class Xuiv2Service extends XuiBase
         $links=[];
         foreach ($server->load('inbounds')->inbounds as $inbound) {
             if ($inbound->sub_template){
-                $links[] = str_replace('{uiid}', $devise->ui_id, $inbound->sub_template);
+                $links[] = str_replace('{uiid}', $devise->ui_id, $inbound->sub_template.'#'.$server->flag.$server->name);
             }
         }
 
@@ -112,8 +120,8 @@ class Xuiv2Service extends XuiBase
             $url.='&sid='.$connect->sid;
             $url.='&spx='.$connect->spx;
             $url.='&pqv='.$connect->pqv;
-            $url.='#'.$server->name;
-            $url.=''.$server->flag;
+//            $url.='#'.$server->name;
+//            $url.=''.$server->flag;
 //            $array[]=$url;
 //        }
         return $url;
@@ -160,12 +168,13 @@ class Xuiv2Service extends XuiBase
     }
     public function resetAllTraffics(Server $server)
     {
-        $this->http->request('post', $server,'panel/api/inbounds/resetAllTraffics');
+         $this->http->request('post', $server,'panel/api/inbounds/resetAllTraffics');
     }
 
     public function getTraffik(Server $server)
     {
         $response =  $this->http->request('get',$server,"panel/api/inbounds/list");
+
         $total=0;
         $result=[];
         if (!$response) {
@@ -176,10 +185,11 @@ class Xuiv2Service extends XuiBase
 
         $result = [];
         foreach ($obj as $inbound) {
+//            dd($inbound);
             $inbound=$inbound['clientStats'];
             foreach($inbound as $client){
                 $email = $client['uuid'] ?? '';
-                $total= $client['allTime']; //(($client->up+$client->down) ?? 0);
+                $total= $client['up']+$client['down'];
                 if (!isset($result[$email])) {
                     $result[$email] = 0;
                 }

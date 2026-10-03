@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ServerInbound extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'inbound',
         'server_id',

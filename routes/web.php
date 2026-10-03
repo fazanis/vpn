@@ -32,27 +32,50 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/paumetn/freekassa/success',function(Request $request){
+Route::get('/paumetn/freekassa/events',function (Request $request){
+
+    $order = \App\Models\Payment::query()
+        ->where('id',$request->MERCHANT_ORDER_ID)
+        ->first();
+
+    if ($order->amount!=$request->AMOUNT) {
+        return response('false',200);
+    }
+    if ($order->user->notTrialSubscription->status == Subscription::STATUS_NOT_PAYMENT){
+        $d=0;
+        foreach($order->user->activeSubscriptions as $item)
+        {
+
+            if($item->expires_at>=now()){
+                $d+=now()->startOfDay()->diffInDays($item->expires_at->startOfDay());
+            }
+        }
+        $expires_at = now()->addDay($order->user->notTrialSubscription->days+$d);
+
+        $order->user->notTrialSubscription()->update([
+            'status'=>Subscription::STATUS_ACTIVE,
+            'expires_at'=>$expires_at
+        ]);
+        $order->update([
+            'intid'=>$request->intid,
+            'status'=>Subscription::STATUS_ACTIVE,
+            'paid_at'=>now()
+        ]);
+    }
+
+    return response('ok',200);
+})->name('payment.freekassa.events');
+Route::get('/paumetn/freekassa/success',[SubscriptPageController::class,'success'])->name('payment.freekassa.success');
+Route::get('/paumetn/freekassa/filed',function(Request $request){
     dd($request->all());
 });
-Route::get('/test', function () {
+Route::get('/payment/{payment}/status', [SubscriptPageController::class, 'status'])->name('payment.status');
 
-//      $user = User::query()->where('email','fazanis@mail.ru')->first();
-//        $data = ['name'=>$user->name, "telegramLink" => 'https://t.me/'.env('TELEGRAM_BOT_NAME').'?start='.$user->ui_id];
-//        $to_name = 'Иван';
-//        $to_email = $user->email;
-//
-//        Mail::send('emails.subTelegram', $data, function($message) use ($to_name, $to_email) {
-//            $message->to($to_email, $to_name)->subject('Подпишитесь на телеграм');
-//            $message->from('admin@family-nett.ru',env('APP_NAME'));
-//        });
-
-
-
-
-});
+//Route::get('/test', function () {});
 //https://family-nett.ru/paumetn/freekassa/events
 Route::get('/sub/{token}',[SubscriptPageController::class,'index'])->name('subscription.devises');
+
+
 //Route::get('/sub/{token}', function ($token) {
 //    $response = Http::get("https://family-nett.ru/sub/{$token}");
 //
@@ -91,9 +114,12 @@ Route::post('/reset-password', [LoginController::class, 'passwordUpdate'])->name
 Route::prefix('/cabinet')->name('cabinet.')
 ->middleware('cabinet')
 ->group(function (){
-
+    Route::get('/subscription/trial/activate/{tarif}',[SubscriptPageController::class,'trialActivate'])->name('subscription.trial.activate');
+    Route::post('/subscription/{tariff}/{user}/buy',[SubscriptPageController::class,'buy'])->name('subscription.buy');
+    Route::post('/subscription/{tariff}/{user}/extend',[SubscriptPageController::class,'extend'])->name('subscription.extend');
     Route::get('/', [DashboardController::class,'index'])->name('dashboard');
     Route::get('/get_trial', GetTrialController::class)->name('get_trial');
+    Route::get('/tarifs',[\App\Http\Controllers\Cabinet\TarifController::class,'index'])->name('tarifs');
     Route::get('/subscription', [SubscriptionController::class,'devises'])->name('subscription.devises');
     Route::resource('/devises', DevisController::class);
 

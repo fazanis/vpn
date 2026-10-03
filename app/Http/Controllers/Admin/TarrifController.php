@@ -11,7 +11,7 @@ class TarrifController extends Controller
     public function index ()
     {
         $tarrifs= Tariff::paginate(20);
-    
+
         return view('admin.terrifs.index',compact('tarrifs'));
     }
 
@@ -23,7 +23,7 @@ class TarrifController extends Controller
     public function store(Request $request)
     {
         Tariff::create($request->all());
-        return redirect()->route('tarrifs.index');
+        return redirect()->route('admin.tarrifs.index');
     }
     public function edit(Tariff $tarrif)
     {
@@ -33,6 +33,6 @@ class TarrifController extends Controller
     public function update(Request $request,Tariff $tarrif)
     {
         $tarrif->update($request->all());
-        return redirect()->route('tarrifs.index');
+        return redirect()->route('admin.tarrifs.index');
     }
 }

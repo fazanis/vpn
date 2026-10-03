@@ -85,8 +85,40 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(Subscription::class,'user_id','id');
     }
 
+    public function notTrialSubscription()
+    {
+        return $this->hasOne(Subscription::class,'user_id','id')
+            ->whereNot('type','trial');
+    }
     public function devise()
     {
         return $this->hasOne(Devise::class,'user_id','id');
+    }
+    public function devises()
+    {
+        return $this->hasMany(Devise::class,'user_id','id');
+    }
+
+    public function activeSubscription()
+    {
+        return $this->hasOne(Subscription::class,'user_id','id')
+            ->where('expires_at', '>=', now())
+            ->latestOfMany();
+    }
+    public function activeSubscriptions()
+    {
+        return $this->hasMany(Subscription::class,'user_id','id')
+            ->where('expires_at', '>=', now());
+    }
+    public function isAdminReferral(): bool
+    {
+        return self::query()
+            ->where('is_admin', true)
+            ->where('referral_code', $this->referred_by)
+            ->exists();
+    }
+    public function hasUnlimitedAccess(): bool
+    {
+        return $this->referrer?->is_admin === 1;
     }
 }

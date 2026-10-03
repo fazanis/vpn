@@ -14,9 +14,12 @@ use Illuminate\Support\Facades\Schedule;
 //Schedule::command("queue:work --queue=high,default,low --stop-when-empty")->everySecond();
 // Schedule::command(SincJobs::class)->everySecond();
 // Schedule::command(BalansesServersCommand::class)->everyFifteenSeconds();
-Schedule::command(\App\Console\Commands\Sinc\CountTrafikCommand::class)->hourly();
+
+Schedule::command(\App\Console\Commands\Sinc\CountTrafikCommand::class)->everyThirtyMinutes();
 
 Schedule::command(\App\Console\Commands\SendMailWithTelegramLink::class)->dailyAt('12:00');
 
 Schedule::command(\App\Console\Commands\TakeServerStatus::class)->everyTwoHours();
+
+Schedule::command(\App\Console\Commands\OffTarifCommand::class)->everyFiveMinutes();
 

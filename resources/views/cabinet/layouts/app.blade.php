@@ -9,12 +9,15 @@
 {{--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>--}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/cabinet.css') }}">
+    <link rel="stylesheet" href="{{ asset('/css/cabinet.css') }}">
 </head>
 
 <body>
+<div class="mobile-overlay" id="mobileOverlay"></div>
+
 <div class="shell">
-    <aside class="sidebar">
+
+    <aside class="sidebar" id="sidebar">
         <div class="logo">
             <div class="logo-icon">
                 <svg viewBox="0 0 18 18" fill="none">
@@ -29,22 +32,31 @@
         </div>
 
         <div class="nav-section">
-
             <div class="nav-label">Главное</div>
-            <div class="nav-item active">
+
+            <a href="{{route('cabinet.dashboard')}}" class="nav-item {{ request()->routeIs('cabinet.dashboard') ? 'active' : '' }}">
+{{--            <div class="nav-item">--}}
                 <svg viewBox="0 0 16 16" fill="none">
                     <circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3" />
-                    <path d="M8 2C8 2 6 5 6 8s2 6 2 6M8 2c0 0 2 3 2 6s-2 6-2 6M2 8h12" stroke="currentColor" stroke-width="1.3" />
+                    <path d="M8 2C8 2 6 5 6 8s2 6 2 6M8 2c0 0 2 3 2 6s-2 6-2 6M2 8h12"
+                          stroke="currentColor"
+                          stroke-width="1.3" />
                 </svg>
-                Обзор
-            </div>
-{{--            <div class="nav-item">--}}
-{{--                <svg viewBox="0 0 16 16" fill="none">--}}
-{{--                    <rect x="2" y="2" width="12" height="10" rx="2" stroke="currentColor" stroke-width="1.3" />--}}
-{{--                    <path d="M5 14h6M8 12v2" stroke="currentColor" stroke-width="1.3" />--}}
-{{--                </svg>--}}
-{{--                Серверы--}}
+                <span>Обзор</span>
 {{--            </div>--}}
+            </a>
+            <a href="{{ route('cabinet.tarifs') }}"
+               class="nav-item {{ request()->routeIs('cabinet.tarifs') ? 'active' : '' }}">
+                <svg viewBox="0 0 16 16" fill="none">
+                    <rect x="2" y="2" width="12" height="10" rx="2"
+                          stroke="currentColor"
+                          stroke-width="1.3" />
+                    <path d="M5 14h6M8 12v2"
+                          stroke="currentColor"
+                          stroke-width="1.3" />
+                </svg>
+                <span>Тарифы</span>
+            </a>
 {{--            <div class="nav-item">--}}
 {{--                <svg viewBox="0 0 16 16" fill="none">--}}
 {{--                    <path d="M8 1l2.5 4.5L16 6.5l-4 4 1 5.5L8 13.5l-5 2.5 1-5.5-4-4 5.5-1z" stroke="currentColor"--}}
@@ -106,71 +118,38 @@
 
     <main class="main">
         <div class="top-bar">
+
+            <button
+                type="button"
+                class="mobile-menu-button"
+                onclick="toggleMobileMenu()"
+                aria-label="Меню"
+            >
+                <svg viewBox="0 0 24 24" fill="none">
+                    <path
+                        d="M4 6H20M4 12H20M4 18H20"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                    />
+                </svg>
+            </button>
+
             <div>
                 <div class="page-title">Личный кабинет</div>
-                <div class="page-sub">Добро пожаловать</div>
+                <div class="page-sub">
+                    Добро пожаловать {{auth()->user()->name}}
+                </div>
             </div>
+
         </div>
         @include('cabinet.partials.errors')
 
         <div class="content-grid">
             <div>
-                {{--            <div class="connect-hero">--}}
+{{--                <div class="card mb-3">--}}
 
-                {{--                <div class="conn-info">--}}
-                {{--                    <ul>--}}
-                {{--                        <li>Скачать Happ <button class="btn btn-success">Скачать</button></li>--}}
-                {{--                    </ul>--}}
-                {{--                </div>--}}
-                {{--            </div>--}}
-                <div class="card mb-3">
         @yield('content')
-{{--                    <div class="card">--}}
-{{--                        <div class="card-title">--}}
-{{--                            Трафик (24ч)--}}
-{{--                            <span>МБ/с</span>--}}
-{{--                        </div>--}}
-{{--                        <div class="traffic-chart">--}}
-{{--                            <svg viewBox="0 0 560 80" preserveAspectRatio="none">--}}
-{{--                                <defs>--}}
-{{--                                    <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">--}}
-{{--                                        <stop offset="0%" stop-color="rgba(0,229,160,0.3)" />--}}
-{{--                                        <stop offset="100%" stop-color="rgba(0,229,160,0)" />--}}
-{{--                                    </linearGradient>--}}
-{{--                                    <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">--}}
-{{--                                        <stop offset="0%" stop-color="rgba(0,149,255,0.25)" />--}}
-{{--                                        <stop offset="100%" stop-color="rgba(0,149,255,0)" />--}}
-{{--                                    </linearGradient>--}}
-{{--                                </defs>--}}
-{{--                                <path--}}
-{{--                                    d="M0 65 C40 60 60 20 100 30 C130 38 150 55 190 40 C230 25 250 50 290 35 C320 22 340 45 380 38 C420 30 440 55 480 42 C510 32 530 20 560 28 L560 80 L0 80Z"--}}
-{{--                                    fill="url(#g1)" />--}}
-{{--                                <path--}}
-{{--                                    d="M0 65 C40 60 60 20 100 30 C130 38 150 55 190 40 C230 25 250 50 290 35 C320 22 340 45 380 38 C420 30 440 55 480 42 C510 32 530 20 560 28"--}}
-{{--                                    stroke="var(--accent)" stroke-width="1.5" fill="none" />--}}
-{{--                                <path--}}
-{{--                                    d="M0 72 C50 68 70 45 110 52 C150 58 170 42 210 50 C240 56 260 38 300 48 C340 56 360 36 400 45 C440 52 460 40 500 48 C530 54 545 42 560 46 L560 80 L0 80Z"--}}
-{{--                                    fill="url(#g2)" />--}}
-{{--                                <path--}}
-{{--                                    d="M0 72 C50 68 70 45 110 52 C150 58 170 42 210 50 C240 56 260 38 300 48 C340 56 360 36 400 45 C440 52 460 40 500 48 C530 54 545 42 560 46"--}}
-{{--                                    stroke="var(--accent2)" stroke-width="1.5" fill="none" />--}}
-{{--                            </svg>--}}
-{{--                        </div>--}}
-{{--                        <div--}}
-{{--                            style="display:flex;justify-content:space-between;margin-top:10px;font-size:11px;font-family:'DM Mono';color:var(--muted)">--}}
-{{--                            <span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>Сейчас</span>--}}
-{{--                        </div>--}}
-{{--                        <div style="display:flex;gap:18px;margin-top:14px">--}}
-{{--                            <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-family:'DM Mono'">--}}
-{{--                                <div style="width:10px;height:2px;background:var(--accent);border-radius:1px"></div>--}}
-{{--                                Загрузка--}}
-{{--                            </div>--}}
-{{--                            <div style="display:flex;align-items:center;gap:6px;font-size:12px;font-family:'DM Mono'">--}}
-{{--                                <div style="width:10px;height:2px;background:var(--accent2);border-radius:1px"></div>--}}
-{{--                                Отдача--}}
-{{--                            </div>--}}
-{{--                        </div>--}}
-{{--                    </div>--}}
                 </div>
             <div style="display:flex;flex-direction:column;gap:18px">
                 <div class="card">
@@ -273,6 +252,17 @@
 </div>
 
 <script>
+    function toggleMobileMenu() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('mobileOverlay');
+
+        sidebar.classList.toggle('mobile-open');
+        overlay.classList.toggle('mobile-open');
+    }
+    document.getElementById('mobileOverlay').addEventListener('click', function () {
+        document.getElementById('sidebar').classList.remove('mobile-open');
+        this.classList.remove('mobile-open');
+    });
     function openDeviceModal() {
         document.getElementById('deviceModal').classList.add('active');
     }

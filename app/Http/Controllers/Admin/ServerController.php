@@ -40,7 +40,10 @@ class ServerController extends Controller
         ]);
         $server = Server::query()->create($request->all());
 
+        $this->updateconnect($server);
+
         DeviseSincJob::dispatch($server)->onQueue('low');
+
         return redirect()->route('admin.servers.index');
     }
 
@@ -86,12 +89,13 @@ class ServerController extends Controller
         return redirect()->route('admin.servers.index');
     }
 
-    public function updateconnect(Server $server,XuiFactory $xuiFactory)
+    public function updateconnect(Server $server)
     {
         try {
 
         $server->inbounds()->delete();
-        $xui=$xuiFactory->make($server);
+        $xui = XuiFactory::make($server);
+//        $xui=$xuiFactory->make($server);
 
         $imbounds=$xui->getInbounds($server);
 
@@ -112,27 +116,7 @@ class ServerController extends Controller
         }catch (ConnectionException $e) {
 
         }
-////        dd($imbounds->json('obj'));
-//        if ($imbounds==null){
-//            return back()->with('error','Ошибка подключения сервера '.$server->ip);
-//        }
-//        $xuiIds = collect($imbounds->json('obj'))->pluck('id')->toArray();
-//
-//        ServerInbound::where('server_id',$server->id)->whereNotIn('inbound', $xuiIds)->delete();
-//
-//        foreach($imbounds->json('obj') as $imbound){
-//            dd($xui->getSubLinksFromImbaund($imbound));
-//            $array=InboundsDTO::make($imbound);
-////
-////                ServerInbound::query()->updateOrCreate([
-////                    'server_id'=>$server->id,
-////                    'protocol'=>$array->protocol,
-////                    'type'=>$array->network,
-////                ],(array)$array);
-////
-////
-////            DeviseSincJob::dispatch($server)->onQueue('low');
-//        }
+
 
         return back()->with('success','Подключение успешно обновлено '.$server->ip);
 
