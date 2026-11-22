@@ -121,4 +121,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->referrer?->is_admin === 1;
     }
+
+    public function payment()
+    {
+        return $this->hasOne(Payment::class,'user_id','id');
+    }
 }

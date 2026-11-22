@@ -181,6 +181,7 @@ it('if active subscription', function () {
     ]);
     $server = \App\Models\Server::factory()->create([
         'name'=>'test',
+        'status'=>'active'
     ]);
     $inbounnd = \App\Models\ServerInbound::factory()->create([
         'server_id'=>$server->id,
@@ -196,3 +197,5 @@ it('if active subscription', function () {
     $response->assertSeeText('test');
     $response->assertSee($inbounnd->sub_template, false);
 });
+
+

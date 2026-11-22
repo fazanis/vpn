@@ -189,6 +189,9 @@ class SubscriptPageController extends Controller
 
     public function buy(Request $request,Tariff $tariff,User $user,FreeKassa $kassa)
     {
+        if($user->payment){
+            $user->payment->delete();
+        }
         if($user->notTrialSubscription?->expires_at>now()){
             return redirect()->route('cabinet.dashboard')->with('warning','У вас еще действует активная подписка. Сменить тариф можно будет после того как она истечет');
         }
@@ -243,6 +246,39 @@ class SubscriptPageController extends Controller
         ]);
     }
 
+    public function events(Request $request)
+    {
+        $order = \App\Models\Payment::query()
+            ->where('id',$request->MERCHANT_ORDER_ID)
+            ->first();
+
+        if ($order->amount!=$request->AMOUNT) {
+            return response('false',200);
+        }
+        if ($order->user->notTrialSubscription->status == Subscription::STATUS_NOT_PAYMENT){
+            $d=0;
+            foreach($order->user->activeSubscriptions as $item)
+            {
+
+                if($item->expires_at>=now()){
+                    $d+=Carbon::now()->startOfDay()->diffInDays($item->expires_at->startOfDay());
+                }
+            }
+            $expires_at = Carbon::now()->addDay($order->user->notTrialSubscription->days+$d);
+
+            $order->user->notTrialSubscription()->update([
+                'status'=>Subscription::STATUS_ACTIVE,
+                'expires_at'=>$expires_at
+            ]);
+            $order->update([
+                'intid'=>$request->intid,
+                'status'=>Subscription::STATUS_ACTIVE,
+                'paid_at'=>now()
+            ]);
+        }
+
+        return response('ok',200);
+    }
     public function extend(Request $request,Tariff $tariff,FreeKassa $kassa)
     {
         $user=auth()->user();
@@ -261,5 +297,18 @@ class SubscriptPageController extends Controller
         ]);
 
         return redirect()->away($kassa->paumentLink($tariff->price,$paument->id));
+    }
+    public function pay(Request $request,Payment $payment,FreeKassa $kassa)
+    {
+
+        $user=auth()->user();
+
+        $user->notTrialSubscription()->update([
+            'status'=>Subscription::STATUS_NOT_PAYMENT,
+        ]);
+
+
+
+        return redirect()->away($kassa->paumentLink($payment->amount,$payment->id));
     }
 }

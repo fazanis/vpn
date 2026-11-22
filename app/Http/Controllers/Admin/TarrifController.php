@@ -32,6 +32,7 @@ class TarrifController extends Controller
 
     public function update(Request $request,Tariff $tarrif)
     {
+
         $tarrif->update($request->all());
         return redirect()->route('admin.tarrifs.index');
     }

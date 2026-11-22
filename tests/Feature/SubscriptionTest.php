@@ -381,6 +381,7 @@ it('by tariff if not active', function () {
     $response = $this->get(
         route('payment.freekassa.events') . '?' . http_build_query($query)
     );
+
     $response->assertSee('ok');
     $this->assertDatabaseHas('subscriptions', [
         'expires_at' => now()->addDay($tariff->duration_days),
@@ -486,4 +487,41 @@ it('pay if subscription expired', function () {
         'status' => Subscription::STATUS_NOT_PAYMENT,
         'paid_at' => null,
     ]);
+});
+it('if not pay paument', function () {
+    $user = User::factory()->create(['is_admin'=>false,'referred_by'=>null]);
+    $tariff = Tariff::factory()->create();
+    $paument = \App\Models\Payment::factory()->create([
+        'user_id'=>$user->id,
+        'tariff_id'=>$tariff->id,
+        'status'=>2,
+        'amount'=>$tariff->price,
+        'paid_at'=>null,
+        'fk_order_id'=>str()->random(),
+    ]);
+
+    $devise = Devise::factory()->create([
+        'user_id'=>$user->id,
+    ]);
+    $subscription = Subscription::factory()->create([
+        'user_id'=>$user->id,
+        'status'=>Subscription::STATUS_NOT_PAYMENT,
+        'type'=>'pay'
+    ]);
+    $server = \App\Models\Server::factory()->create([
+        'name'=>'test',
+        'status'=>'active'
+    ]);
+    $inbounnd = \App\Models\ServerInbound::factory()->create([
+        'server_id'=>$server->id,
+    ]);
+    $this->actingAs($user);
+    $response= $this->get('/cabinet');
+
+    $response->assertOk();
+
+
+    $response->assertSee('Оплатить');
+    $response->assertSee('Неоплеченный счет');
+    $response->assertDontSeeText('Текущая подписка');
 });

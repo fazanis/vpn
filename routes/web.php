@@ -32,39 +32,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/paumetn/freekassa/events',function (Request $request){
-
-    $order = \App\Models\Payment::query()
-        ->where('id',$request->MERCHANT_ORDER_ID)
-        ->first();
-
-    if ($order->amount!=$request->AMOUNT) {
-        return response('false',200);
-    }
-    if ($order->user->notTrialSubscription->status == Subscription::STATUS_NOT_PAYMENT){
-        $d=0;
-        foreach($order->user->activeSubscriptions as $item)
-        {
-
-            if($item->expires_at>=now()){
-                $d+=now()->startOfDay()->diffInDays($item->expires_at->startOfDay());
-            }
-        }
-        $expires_at = now()->addDay($order->user->notTrialSubscription->days+$d);
-
-        $order->user->notTrialSubscription()->update([
-            'status'=>Subscription::STATUS_ACTIVE,
-            'expires_at'=>$expires_at
-        ]);
-        $order->update([
-            'intid'=>$request->intid,
-            'status'=>Subscription::STATUS_ACTIVE,
-            'paid_at'=>now()
-        ]);
-    }
-
-    return response('ok',200);
-})->name('payment.freekassa.events');
+Route::get('/paumetn/freekassa/events',[SubscriptPageController::class,'events'])->name('payment.freekassa.events');
 Route::get('/paumetn/freekassa/success',[SubscriptPageController::class,'success'])->name('payment.freekassa.success');
 Route::get('/paumetn/freekassa/filed',function(Request $request){
     dd($request->all());
@@ -117,6 +85,7 @@ Route::prefix('/cabinet')->name('cabinet.')
     Route::get('/subscription/trial/activate/{tarif}',[SubscriptPageController::class,'trialActivate'])->name('subscription.trial.activate');
     Route::post('/subscription/{tariff}/{user}/buy',[SubscriptPageController::class,'buy'])->name('subscription.buy');
     Route::post('/subscription/{tariff}/{user}/extend',[SubscriptPageController::class,'extend'])->name('subscription.extend');
+    Route::post('/subscription/{payment}/pay',[SubscriptPageController::class,'pay'])->name('subscription.pay');
     Route::get('/', [DashboardController::class,'index'])->name('dashboard');
     Route::get('/get_trial', GetTrialController::class)->name('get_trial');
     Route::get('/tarifs',[\App\Http\Controllers\Cabinet\TarifController::class,'index'])->name('tarifs');

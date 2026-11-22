@@ -52,6 +52,32 @@
         </div>
     </div>
     @endif
+    @if($payment && $payment->paid_at==null)
+    <div class="card mb-4">
+        <div class="tarif-name">
+            <span>Неоплеченный счет</span>
+        </div>
+        <div class="tarifs-list">
+            <div class="tarif-item">
+                <div class="tarif-info">
+                    <div class="tarif-name">
+                        {{$payment->tarif->name}} - {{$payment->amount}} р
+                    </div>
+                </div>
+                <div class="tarif-{{$subscription->statusName()['class']}}">
+                    <form action="{{ route('cabinet.subscription.pay', [$payment]) }}" target="_blank" method="POST">
+                        @csrf
+
+                        <button type="submit" class="dev-btn primary">
+                            <i class="bi bi-credit-card"></i>
+                            Оплатить
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    @else
     <div class="card mb-4">
 
         <div class="tarif-name">
@@ -88,8 +114,7 @@
                                     Продлить
                                 </button>
                             </form>
-
-                        @if($subscription->status==2)
+                        @if($subscription->status==\App\Models\Subscription::STATUS_NOT_PAYMENT)
                             <a href="{{ route('cabinet.tarifs') }}" class="dev-btn warning" style="margin-left: 5px">
                                 Сменить тариф
                             </a>
@@ -115,6 +140,7 @@
             @endif
         </div>
     </div>
+    @endif
     {{-- Telegram --}}
 {{--    @if(!auth()->user()->telegram_id)--}}
 {{--        <div class="card mb-4">--}}

@@ -23,4 +23,8 @@ class Payment extends Model
         return $this->belongsTo(User::class,'user_id');
     }
 
+    public function tarif()
+    {
+        return $this->belongsTo(Tariff::class,'tariff_id');
+    }
 }

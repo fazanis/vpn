@@ -53,6 +53,7 @@ class DashboardController extends Controller
             'tg_bot'=>$tg_bot,
             'trialUsed'=>$trialUsed,
             'user'=>$user,
+            'payment'=>$payment,
             'paument_link'=>$paument_link
         ]);
     }
