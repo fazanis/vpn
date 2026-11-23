@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Devise;
+use App\Models\Server;
 use App\Models\User;
+use App\Services\Xui\Services\ClientService;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -47,5 +49,15 @@ class UserController extends Controller
             ->whereDoesntHave('devise')
             ->delete();
         return back();
+    }
+
+    public function list(ClientService $clientService)
+    {
+        $myServers = Server::query()->with('inbounds')
+            ->activate()
+            ->orderBy('priority')->get();
+        $online=$clientService->clientCount($myServers);;
+        return response()->json($online);
+
     }
 }

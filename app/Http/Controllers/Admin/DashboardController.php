@@ -19,23 +19,12 @@ use function Laravel\Prompts\password;
 
 class DashboardController extends Controller
 {
-    public function __invoke(ClientService $clientService)
+    public function __invoke()
     {
-        $myServers = Server::query()->with('inbounds')
-            ->activate()
-            ->orderBy('priority')->get();
-        $servers=[];
-        foreach($myServers as $server) {
-            $xui = XuiFactory::make($server);
-            $servers[] = $xui->status($server);
-
-        }
-        $online=$clientService->clientCount($myServers);;
-
-        //$xui->servers->online($myServers);
 
         $devises = Devise::query()->with('user')->orderByDesc('trafik')->paginate(10);
-        return view('admin.dashboard',compact('devises','servers','online'));
+        return view('admin.dashboard',compact('devises'));
+//        return view('admin.dashboard',compact('devises','servers','online'));
 
     }
 }

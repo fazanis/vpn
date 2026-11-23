@@ -33,7 +33,7 @@ final class ServerStatusDTO
         public ?int    $netIOUp,
         public ?int    $netIODown,
 
-        public bool    $error = false,
+        public bool    $error = false
     )
     {
     }
@@ -99,9 +99,51 @@ final class ServerStatusDTO
 
             netIOUp:$data['netIO']['up'] ?? null,
             netIODown:$data['netIO']['down'] ?? null,
+            error: $data['error'] ?? false
         );
     }
 
+    public function toArray():array
+    {
+        return [
+            'serverName' => $this->serverName,
+            'serverIp' => $this->serverIp,
+            'serverType' => $this->serverType,
+            'serverPort' => $this->serverPort,
+            'serverFolder' => $this->serverFolder,
+
+            'cpu' => $this->cpu,
+            'cpuCores' => $this->cpuCores,
+            'logicalPro' => $this->logicalPro,
+            'cpuSpeedMhz' => $this->cpuSpeedMhz,
+
+            'memCurrent' => $this->memCurrent,
+            'memTotal' => $this->memTotal,
+            'memoryPercentFormated' => $this->memoryPercentFormated(),
+
+            'swapCurrent' => $this->swapCurrent,
+            'swapTotal' => $this->swapTotal,
+
+            'diskCurrent' => $this->diskCurrent,
+            'diskTotal' => $this->diskTotal,
+            'diskPercentFormated' => $this->diskPercentFormated(),
+            'memCurrentFormated' => $this->memCurrentFormated(),
+            'diskCurrentFormated' => $this->diskCurrentFormated(),
+            'diskTotalFormated' => $this->diskTotalFormated(),
+
+            'xray' => $this->xray,
+            'uptime' => $this->uptime,
+
+            'tcpCount' => $this->tcpCount,
+            'udpCount' => $this->udpCount,
+
+            'netIOUp' => $this->netIOUp,
+            'netIODown' => $this->netIODown,
+
+            'error' => $this->error,
+            'serverLink' => $this->serverLink(),
+        ];
+    }
     protected function bytesFormated($bytes): string
     {
         if ($bytes <= 0) return '0 B';

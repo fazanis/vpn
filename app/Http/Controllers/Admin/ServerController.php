@@ -143,4 +143,18 @@ class ServerController extends Controller
         Devise::query()->update(['trafik' => 0]);
         return back();
     }
+
+    public function list()
+    {
+        $myServers = Server::query()->with('inbounds')
+            ->activate()
+            ->orderBy('priority')->get();
+        $servers=[];
+        foreach($myServers as $server) {
+            $xui = XuiFactory::make($server);
+            $servers[] = $xui->status($server)->toArray();
+
+        }
+        return response()->json($servers);
+    }
 }

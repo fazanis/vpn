@@ -16,6 +16,8 @@ services:
         UID: ${UID:-1000}
         GID: ${GID:-1000}
     container_name: php_${APP_NETWORK}
+    ports:
+      - "5173:5173"
     volumes:
       - './:/var/www/app'
     networks:

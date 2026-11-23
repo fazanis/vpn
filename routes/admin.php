@@ -59,6 +59,7 @@ Route::prefix('/admin')->middleware('admin')->name('admin.')->group(function (){
     Route::get('/update/geo',[UpdateGeoController::class,'index'])->name('update.geo');
     Route::get('/',\App\Http\Controllers\Admin\DashboardController::class)->name('dashboard');
 
+    Route::get('/servers/list',[\App\Http\Controllers\Admin\ServerController::class,'list'])->name('servers.list');
     Route::get('/server/deactivated/{server}',[\App\Http\Controllers\Admin\ServerController::class,'deactivated'])->name('server.deactivated');
     Route::get('/server/resetTraffik',[\App\Http\Controllers\Admin\ServerController::class,'resetTraffik'])->name('reset.traffik');
     Route::get('/server/updateconnect/{server}',[\App\Http\Controllers\Admin\ServerController::class,'updateconnect'])->name('server.updateconnect');
@@ -70,6 +71,7 @@ Route::prefix('/admin')->middleware('admin')->name('admin.')->group(function (){
     });
     Route::get('users/delete_not_devise', [\App\Http\Controllers\Admin\UserController::class, 'delete_not_devise'])
         ->name('delete_not_devise');
+    Route::get('/users/list',[\App\Http\Controllers\Admin\UserController::class,'list'])->name('users.list');
     Route::resource('/users',\App\Http\Controllers\Admin\UserController::class);
     // Route::resource('/users/devises',AdminDevisController::class);
     Route::get('users/{user}/devices', [AdminDevisController::class, 'index'])

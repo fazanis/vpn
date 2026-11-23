@@ -1,6 +1,7 @@
 @extends('layouts.admin')
 @section('content')
     <a href="{{route('admin.servers.create')}}" class="btn btn-success">Добавить</a>
+
     <div class="card-body">
         <table class="table table-bordered">
             <thead>

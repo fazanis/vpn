@@ -56,11 +56,14 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/jsvectormap@1.5.3/dist/css/jsvectormap.min.css"
         integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4=" crossorigin="anonymous" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v6.6.0/css/all.css">
+    @vite([
+      'resources/css/app.css',
+      'resources/js/app.js'
+  ])
 </head>
 <!--end::Head-->
 <!--begin::Body-->
-
-<body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
+<div class="layout-fixed sidebar-expand-lg bg-body-tertiary">
     <!--begin::App Wrapper-->
     <div class="app-wrapper">
         <!--begin::Header-->
@@ -614,6 +617,7 @@
         const sparkline3 = new ApexCharts(document.querySelector('#sparkline-3'), option_sparkline3);
         sparkline3.render();
     </script>
+
     <!--end::Script-->
 </body>
 <!--end::Body-->
