@@ -7,7 +7,7 @@
                     <div class="alert alert-info">
                         <h5 class="mb-0">
                             Всего онлайн:
-                            {{ users.length }}
+                            {{ totalUsers  }}
                         </h5>
                     </div>
                 </div>
@@ -64,6 +64,13 @@ export default {
     mounted() {
         this.loadServers();
     },
+    computed: {
+        totalUsers() {
+            return this.users.reduce((total, server) => {
+                return total + (server.users?.length || 0);
+            }, 0);
+        }
+    },
     methods: {
         async loadServers() {
             try {
@@ -71,6 +78,7 @@ export default {
                 const response = await axios.get('/admin/users/list');
                 this.users = response.data;
                 this.loading = false;
+
             } catch (error) {
                 this.loading = false;
                 console.error('Ошибка запроса:', error);
