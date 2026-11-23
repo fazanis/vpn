@@ -40,7 +40,7 @@
                                     {{ user }}
                                 </li>
                             </ul>
-                            <div class="text-center text-muted p-3" :else>
+                            <div v-else class="text-center text-muted p-3">
                                 Нет активных пользователей
                             </div>
 
