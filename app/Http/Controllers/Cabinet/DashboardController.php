@@ -26,7 +26,7 @@ class DashboardController extends Controller
         $subscription = Subscription::query()
             ->where('user_id',auth()->id())
             ->latest()->first();
-        $payment = Payment::query()->latest()->first();
+        $payment = Payment::query()->where('user_id',$user->id)->latest()->first();
         $paument_link = $payment ? $kassa->paumentLink($payment->amount, $payment->id) : '';
         $trialUsed = Subscription::query()
             ->where('user_id', auth()->id())
