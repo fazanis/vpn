@@ -64,7 +64,7 @@
                         {{$payment->tarif->name}} - {{$payment->amount}} р
                     </div>
                 </div>
-                <div class="tarif-{{$subscription->statusName()['class']}}">
+                <div class="tarif-{{$subscription ? $subscription->statusName()['class'] :''}}">
                     <form action="{{ route('cabinet.subscription.pay', [$payment]) }}" target="_blank" method="POST">
                         @csrf
 
